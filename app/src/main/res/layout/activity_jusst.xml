@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/love"
+    tools:context=".JustActivity">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="信息调查"
+        android:textSize="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textView1" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="请输入你的姓名:"
+        android:textSize="25dp"
+        android:layout_below="@+id/textView1"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView2" />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2"
+        android:hint="请输入姓名"
+        android:layout_alignParentStart="true"
+        android:id="@+id/editText1" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:text="请输入你的性别:"
+        android:layout_below="@+id/editText1"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView3"/>
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="男/女"
+        android:layout_below="@+id/textView3"
+        android:id="@+id/editText2" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="请输入你的年龄"
+        android:textSize="25sp"
+        android:layout_below="@+id/editText2"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView4" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="法定年龄"
+        android:layout_below="@+id/textView4"
+        android:layout_alignParentStart="true"
+        android:id="@+id/editText3" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="输入你的证件号"
+        android:textSize="25dp"
+        android:id="@+id/textView5"
+        android:layout_below="@+id/editText3"
+        android:layout_alignParentStart="true" />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="身份证号或者学号"
+        android:id="@+id/editText4"
+        android:layout_below="@+id/textView5"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="提 交"
+        android:id="@+id/button"
+        android:layout_below="@+id/editText4"
+        android:layout_alignStart="@+id/textView1" />
+
+</RelativeLayout>
