@@ -1,9 +1,9 @@
 package yuan.com.luoling.bean;
 
-import java.io.File;
 import java.util.List;
 
 /**
+ * 数据类，采用单例模式
  * Created by yuan-pc on 2016/06/01.
  */
 public class ListDate {
@@ -17,15 +17,13 @@ public class ListDate {
         return date;
     }
 
-    private List<File> list;
+    private List<ImageFile> imageFiles;
 
-    public List<File> getList() {
-        return list;
+    public List<ImageFile> getImageFiles() {
+        return imageFiles;
     }
 
-    public void setList(List<File> list) {
-        this.list = list;
+    public void setImageFiles(List<ImageFile> imageFiles) {
+        this.imageFiles = imageFiles;
     }
-
-
 }

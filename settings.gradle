@@ -1,1 +1,1 @@
-include ':app', ':FlycoTabLayout_Lib', ':xutils'
+include ':app', ':FlycoTabLayout_Lib', ':xutils',':EaseUI'
