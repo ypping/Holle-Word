@@ -1,6 +1,8 @@
 package yuan.com.luoling.adapter;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,17 +24,15 @@ import yuan.com.luoling.bean.ImageFile;
 import yuan.com.luoling.bean.ListDate;
 
 /**
+ * recyleviewAdapter瀑布流布局适配器
  * Created by yuan-pc on 2016/06/24.
  */
 public class MyRecylerViewAdapter extends RecyclerView.Adapter<MyRecylerViewAdapter.MyViewHolder> {
     private final String TAG = "MyRecylerViewAdapter";
     private Context context;
-    private List<?> list;
-    private ListDate date ;
+    private List<ImageFile> list;
     private LayoutInflater inflater;
     private OnItemClickListener onItemClickListener;
-    private OnItemShow onItemShow;
-    private Object tag;
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
@@ -41,41 +42,24 @@ public class MyRecylerViewAdapter extends RecyclerView.Adapter<MyRecylerViewAdap
         this.onItemClickListener = onItemClickListener;
     }
 
-    public interface OnItemShow {
-        void onItemShow(View view, int position);
-    }
-
-    public void setOnItemShow(OnItemShow onItemShow) {
-        this.onItemShow = onItemShow;
-    }
-
-    public MyRecylerViewAdapter(Context context, ListDate date, Object tag) {
+    public MyRecylerViewAdapter(Context context, ListDate date) {
         this.context = context;
         if (date.getImageFiles() != null) {
             list = date.getImageFiles();
-            this.tag = tag;
         } else {
             date.setImageFiles(new ArrayList<ImageFile>());
             list = date.getImageFiles();
         }
-        this.date = date;
         inflater = LayoutInflater.from(context);
     }
 
     public MyRecylerViewAdapter(Context context) {
         this.context = context;
         inflater = LayoutInflater.from(context);
-        if (date.getImageFiles() != null) {
-            list = date.getImageFiles();
-        } else {
-            date.setImageFiles(new ArrayList<ImageFile>());
-            list = date.getImageFiles();
-        }
-
     }
 
-    public void getData(ListDate date) {
-        this.date = date;
+    public void getData(List<ImageFile> list) {
+        this.list = list;
         notifyDataSetChanged();
     }
 
@@ -97,11 +81,24 @@ public class MyRecylerViewAdapter extends RecyclerView.Adapter<MyRecylerViewAdap
      */
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
-        File file = new File(date.getImageFiles().get(position).getPath());
+        File file = new File(list.get(position).getPath());
         Log.i(TAG, "file:" + file.getPath());
-        Picasso.with(context).load(file).fit().tag(tag).placeholder(R.mipmap.summer_icon).into(holder.imageView);
-        holder.textView.setText(date.getImageFiles().get(position).getName());
-        Log.i("imageFiles", date.getImageFiles().get(position).getName());
+        final ViewPropertyAnimation.Animator animator = new ViewPropertyAnimation.Animator() {
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void animate(final View view) {
+                view.animate().setDuration(2000);
+                view.animate().rotation(360);
+                view.animate().alphaBy(0.5f);
+                view.animate().rotationXBy(0.5f);
+                view.animate().translationZBy(0.6f);
+                view.animate().start();
+            }
+        };
+        Glide.with(context).load(file).skipMemoryCache(false).fitCenter().animate(animator).placeholder(R.mipmap.summer_icon)
+                .into(holder.imageView);
+        holder.textView.setText(list.get(position).getName());
+        Log.i("imageFiles", list.get(position).getName());
 
 
         /**
@@ -114,17 +111,12 @@ public class MyRecylerViewAdapter extends RecyclerView.Adapter<MyRecylerViewAdap
                     onItemClickListener.onItemClick(holder.itemView, position);
                 }
             });
-        if (onItemShow != null) {
-            if (!holder.itemView.isShown()) {
-                Toast.makeText(context, "没有显示", Toast.LENGTH_SHORT);
-            }
-        }
     }
 
     @Override
     public int getItemCount() {
         if (list == null) {
-            date.setImageFiles(new ArrayList<ImageFile>());
+          list=new ArrayList<ImageFile>();
         }
         return list.size();
     }

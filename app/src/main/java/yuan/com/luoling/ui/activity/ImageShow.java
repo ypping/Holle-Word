@@ -10,18 +10,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.squareup.picasso.Picasso;
 
 import org.xutils.view.annotation.ContentView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import yuan.com.luoling.R;
 import yuan.com.luoling.bean.ImageFile;
 import yuan.com.luoling.bean.ListDate;
+import yuan.com.luoling.ui.widget.ImagePageTransforser;
 
 /**
  * 一个全屏显示图片的activity
@@ -29,12 +27,13 @@ import yuan.com.luoling.bean.ListDate;
  */
 @ContentView(value = R.layout.image_show)
 public class ImageShow extends Activity {
+    private final String TAG = "ImageShow";
     //从myActivity获得的数据加载到本页面形成一个可以滑动的页面
     private List<?> list;
     private MyPagerAdapter myPagerAdapter;
     private ListDate data;
     //绑定页面与资源id
-
+    private Object tag = new Object();
     private ViewPager viewPager;
     int position;
 
@@ -43,7 +42,6 @@ public class ImageShow extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_show);
         viewPager = (ViewPager) findViewById(R.id.image_show_image);
-        ObjectAnimator animator = ObjectAnimator.ofFloat(viewPager, "alpha", 0.0f, 0.0f, 1.0F);
         data = ListDate.getListData();
         if (data.getImageFiles() != null) {
             this.list = data.getImageFiles();
@@ -54,7 +52,7 @@ public class ImageShow extends Activity {
         myPagerAdapter = new MyPagerAdapter();
         viewPager.setAdapter(myPagerAdapter);
         viewPager.setCurrentItem(position);
-        animator.start();
+        viewPager.setPageTransformer(true, new ImagePageTransforser());
         initView();
     }
 
@@ -112,13 +110,16 @@ public class ImageShow extends Activity {
          */
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            ImageView v = new ImageView(ImageShow.this);
+            final ImageView v = new ImageView(ImageShow.this);
 
             v.setId(position);
             if (data.getImageFiles().get(position).getName().toLowerCase().endsWith(".gif")) {
-                Glide.with(ImageShow.this).load(data.getImageFiles().get(position).getPath()).asGif().placeholder(R.mipmap.summer_icon).into(v);
+                Glide.with(ImageShow.this).load(data.getImageFiles().get(position).getPath())
+                        .asGif().placeholder(R.mipmap.summer_icon).into(v);
             } else {
-                Picasso.with(getApplication()).load(new File(data.getImageFiles().get(position).getPath())).placeholder(R.mipmap.summer_icon).into(v);
+
+                Glide.with(ImageShow.this).load(data.getImageFiles().get(position).getPath()).fitCenter().skipMemoryCache(false)
+                        .placeholder(R.mipmap.summer_icon).into(v);
             }
 
             container.addView(v, -1, -1);

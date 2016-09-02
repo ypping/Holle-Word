@@ -9,8 +9,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
 
-import com.squareup.picasso.Picasso;
-
 import yuan.com.luoling.adapter.MyRecylerViewAdapter;
 import yuan.com.luoling.bean.ListDate;
 import yuan.com.luoling.inter.UpDataImageFile;
@@ -29,7 +27,6 @@ public class MyActivity extends Activity {
     private ListDate data = ListDate.getListData();
     private MyRecylerViewAdapter viewAdapter;
     private ViewPager viewPager;
-    private Object tag = new Object();
 
 
     @Override
@@ -40,7 +37,7 @@ public class MyActivity extends Activity {
         UpDataImageIm.getInstance().setUpDataImageFile(new UpDataImageFile() {
             @Override
             public void upDataImage() {
-                viewAdapter.getData(data);
+                viewAdapter.getData(data.getImageFiles());
             }
         });
     }
@@ -52,8 +49,8 @@ public class MyActivity extends Activity {
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         SpacesItemDecoration decoration = new SpacesItemDecoration(DensityUtil.dip2px(this, 10));
         recyclerView.addItemDecoration(decoration);
-          Log.e(TAG, TAG + ":" + data.getImageFiles().size());
-        viewAdapter = new MyRecylerViewAdapter(this, data, tag);
+        Log.e(TAG, TAG + ":" + data.getImageFiles().size());
+        viewAdapter = new MyRecylerViewAdapter(this, data);
         /**
          * item的点击事件
          */
@@ -65,11 +62,7 @@ public class MyActivity extends Activity {
                 startActivity(intent);
             }
         });
-        viewAdapter.setOnItemShow(new MyRecylerViewAdapter.OnItemShow() {
-            @Override
-            public void onItemShow(View view, int position) {
-            }
-        });
+
         recyclerView.setAdapter(viewAdapter);
         recyclerView.setOnItemScrollChangeListener(new MyRecycler.OnItemScrollChangeListener() {
             @Override
@@ -80,11 +73,7 @@ public class MyActivity extends Activity {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    Picasso.with(MyActivity.this).resumeTag(tag);
-                } else {
-                    Picasso.with(MyActivity.this).pauseTag(tag);
-                }
+
             }
         });
         /**
