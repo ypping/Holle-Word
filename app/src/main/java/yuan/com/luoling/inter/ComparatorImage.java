@@ -5,6 +5,7 @@ import java.util.Comparator;
 import yuan.com.luoling.bean.ImageFile;
 
 /**
+ * 排序类，将list由大到小进行排序
  * Created by YUAN on 2016/9/1.
  */
 public class ComparatorImage implements Comparator {
