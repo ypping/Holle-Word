@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="Theme.Design.NoActionBar">
+    <style name="AppTheme" parent="Theme.Design.Light.NoActionBar">
         <item name="android:title">@null</item>
         <item name="android:titleTextStyle">@null</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Title</item>
+        <item name="android:selectableItemBackground">@mipmap/loling_welcome</item>
     </style>
 </resources>

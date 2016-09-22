@@ -2,6 +2,7 @@ package yuan.com.luoling.ui.widget;
 
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 
 /**
  * Created by YUAN on 2016/9/2.
@@ -23,7 +24,6 @@ public class ImagePageTransforser implements ViewPager.PageTransformer {
             page.setTranslationX(0);
             page.setScaleX(1);
             page.setScaleY(1);
-
         } else if (position <= 1) { // (0,1]
             // Fade the page out.
             page.setAlpha(1 - position);

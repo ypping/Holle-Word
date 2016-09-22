@@ -14,12 +14,12 @@ import com.bumptech.glide.Glide;
 import org.xutils.view.annotation.ContentView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import yuan.com.luoling.R;
-import yuan.com.luoling.bean.ImageFile;
+import yuan.com.luoling.bean.ImageFiles;
 import yuan.com.luoling.bean.ListDate;
 import yuan.com.luoling.ui.widget.ImagePageTransforser;
+import yuan.com.luoling.utils.ActivityBar;
 
 /**
  * 一个全屏显示图片的activity
@@ -29,23 +29,21 @@ import yuan.com.luoling.ui.widget.ImagePageTransforser;
 public class ImageShow extends Activity {
     private final String TAG = "ImageShow";
     //从myActivity获得的数据加载到本页面形成一个可以滑动的页面
-    private List<?> list;
     private MyPagerAdapter myPagerAdapter;
     private ListDate data;
     //绑定页面与资源id
-    private Object tag = new Object();
     private ViewPager viewPager;
     int position;
+    View back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_show);
+        ActivityBar.setTranslucent(this);
         viewPager = (ViewPager) findViewById(R.id.image_show_image);
+        back = findViewById(R.id.back);
         data = ListDate.getListData();
-        if (data.getImageFiles() != null) {
-            this.list = data.getImageFiles();
-        }
 
         Intent intent = getIntent();
         position = intent.getExtras().getInt("position");
@@ -73,6 +71,12 @@ public class ImageShow extends Activity {
 
             }
         });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     public class MyPagerAdapter extends PagerAdapter {
@@ -86,18 +90,12 @@ public class ImageShow extends Activity {
             if (data.getImageFiles() != null) {
                 return data.getImageFiles().size();
             } else {
-                data.setImageFiles(new ArrayList<ImageFile>());
+                data.setImageFiles(new ArrayList<ImageFiles>());
                 return data.getImageFiles().size();
             }
         }
 
         public void setData() {
-            if (data.getImageFiles() != null) {
-                list = data.getImageFiles();
-            } else {
-                data.setImageFiles(new ArrayList<ImageFile>());
-                list = data.getImageFiles();
-            }
             notifyDataSetChanged();
         }
 
@@ -115,11 +113,11 @@ public class ImageShow extends Activity {
             v.setId(position);
             if (data.getImageFiles().get(position).getName().toLowerCase().endsWith(".gif")) {
                 Glide.with(ImageShow.this).load(data.getImageFiles().get(position).getPath())
-                        .asGif().placeholder(R.mipmap.summer_icon).into(v);
+                        .asGif().into(v);
             } else {
 
-                Glide.with(ImageShow.this).load(data.getImageFiles().get(position).getPath()).fitCenter().skipMemoryCache(false)
-                        .placeholder(R.mipmap.summer_icon).into(v);
+                Glide.with(ImageShow.this).load(data.getImageFiles().get(position).getPath()).fitCenter()
+                        .skipMemoryCache(false).into(v);
             }
 
             container.addView(v, -1, -1);

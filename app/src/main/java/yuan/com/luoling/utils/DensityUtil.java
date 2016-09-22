@@ -2,6 +2,11 @@ package yuan.com.luoling.utils;
 
 import android.content.Context;
 
+import java.io.File;
+import java.util.List;
+
+import yuan.com.luoling.bean.MusicFiles;
+
 
 @SuppressWarnings("deprecation")
 public class DensityUtil {
@@ -22,6 +27,37 @@ public class DensityUtil {
         return (int) (pxValue / scale + 0.5f);
     }
 
+    /**
+     * 匹配歌曲与歌词的lrc文件
+     *
+     * @param musicFiles 歌曲数据类
+     * @param files      歌词文件集合
+     */
+    public static void matchingLRC(MusicFiles musicFiles, List<File> files) {
+        for (File f : files) {
+            String fileName = f.getName().replace(getExtensionName(f.getName()), "");
+            if (musicFiles.getName().equals(fileName)) {
+                musicFiles.setLrcURL(f.getAbsolutePath());
+                return;
+            }
+        }
+    }
+
+    /**
+     * t通过文件名获取后缀的方法
+     *
+     * @param filename
+     * @return
+     */
+    public static String getExtensionName(String filename) {
+        if ((filename != null) && (filename.length() > 0)) {
+            int dot = filename.lastIndexOf('.');
+            if ((dot > -1) && (dot < (filename.length() - 1))) {
+                return filename.substring(dot + 1);
+            }
+        }
+        return filename;
+    }
     /**
      * 绘制九宫格图片
      *

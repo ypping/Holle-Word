@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bg_white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="20dp" >
+
+        <TextView
+            android:id="@+id/notice_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/main_item_margin"
+            android:text="确定清除本地缓存？"
+            android:textColor="@color/text_color_black"
+            android:textSize="@dimen/font_size_normal" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="@dimen/main_item_margin_large"
+        android:layout_marginBottom="@dimen/main_item_margin"
+        android:background="@color/line_color"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/cancle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_item_margin"
+                android:background="@drawable/select_btn_bg_gray"
+                android:gravity="center"
+                android:padding="@dimen/main_item_margin"
+                android:text="取消"
+                android:layout_marginRight="@dimen/main_item_margin"
+                android:textColor="@color/text_color_black"
+                android:textSize="@dimen/font_size_small" />
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/commit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_item_margin"
+                android:padding="@dimen/main_item_margin"
+                android:background="@drawable/select_btn_bg_red"
+                android:gravity="center"
+                android:text="确定"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_size_small" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

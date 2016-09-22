@@ -6,12 +6,11 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
-import com.bumptech.glide.GlideBuilder;
-import com.bumptech.glide.load.DecodeFormat;
-
 import org.xutils.DbManager;
 import org.xutils.db.table.TableEntity;
 import org.xutils.x;
+
+import yuan.com.luoling.services.DBServices;
 
 
 /**
@@ -23,6 +22,7 @@ public class MyApplication extends Application {
     private static MyApplication myApplication;
     private DbManager.DaoConfig daoConfig;
     private DbManager dbManager;
+    private DBServices dbServices;
     /**
      * 是否是第一次运行
      */
@@ -34,7 +34,7 @@ public class MyApplication extends Application {
         x.Ext.init(this);
         myApplication = this;
         context = this;
-         x.Ext.setDebug(BuildConfig.DEBUG);
+        x.Ext.setDebug(BuildConfig.DEBUG);
         daoConfig = new DbManager.DaoConfig()
                 .setDbName("LuoLing_DB")//创建数据库的名称
                 .setDbVersion(1)//数据库版本号
@@ -102,6 +102,14 @@ public class MyApplication extends Application {
 
     public DbManager getDbManager() {
         return dbManager;
+    }
+
+    public DBServices getDbServices() {
+        return dbServices;
+    }
+
+    public void setDbServices(DBServices dbServices) {
+        this.dbServices = dbServices;
     }
 
 }
