@@ -38,7 +38,6 @@ public class MyDbService {
         for (ImageFiles imageFiles : lists) {
             if (imageFiles.getPath() != null)
                 dbManager.save(imageFiles);
-            Log.e("DBService", "图片数据库");
         }
         //showDbMessage("【dbAdd】第一个对象:" + lists.get(0).toString());//user的主键Id不为0
     }
@@ -53,7 +52,6 @@ public class MyDbService {
         for (MusicFiles musicFiles : lists) {
             if (musicFiles.getPath() != null)
                 dbManager.save(musicFiles);
-            Log.e("DBService", "音乐数据库");
         }
         //showDbMessage("【dbAdd】第一个对象:" + lists.get(0).toString());//user的主键Id不为0
     }
@@ -68,7 +66,6 @@ public class MyDbService {
         for (VideoFiles videoFiles : lists) {
             if (videoFiles.getPath() != null)
                 dbManager.save(videoFiles);
-            Log.e("DBService", "视频数据库");
         }
         //showDbMessage("【dbAdd】第一个对象:" + lists.get(0).toString());//user的主键Id不为0
     }

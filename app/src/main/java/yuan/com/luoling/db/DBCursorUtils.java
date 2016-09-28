@@ -255,7 +255,6 @@ public class DBCursorUtils {
      * 查找lrc文件
      */
     public static List<File> fillLRC(String path, List<File> files) {
-        Log.e("fileLrc", "lec" + files.size());
         File[] file = new File(path).listFiles();
         for (File f : file) {
             if (f.isFile()) {

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="true"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
@@ -16,7 +17,7 @@
     <RadioGroup
         android:id="@+id/main_radio"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/mine_order_img_width"
+        android:layout_height="@dimen/bar_height0"
         android:background="@color/promotionbar"
         android:gravity="center_vertical"
         android:orientation="horizontal">

@@ -3,7 +3,6 @@ package yuan.com.luoling.ui.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +24,12 @@ public class WelcomeFragment extends Fragment {
      * 图片数组
      */
     private int[] pic = new int[3];
+    private int position;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Bundle bundle = getArguments();
         ImageView imageView = new ImageView(getActivity());
         imageView.setLayoutParams(new LinearLayout.LayoutParams(-1, -1));
         for (int i = 0; i < pic.length; i++) {
@@ -47,7 +48,7 @@ public class WelcomeFragment extends Fragment {
             gifDrawable.addAnimationListener(new AnimationListener() {
                 @Override
                 public void onAnimationCompleted(int loopNumber) {
-                        continueToGIF.onContinueToGIF();
+                    continueToGIF.onContinueToGIF();
 
                 }
             });

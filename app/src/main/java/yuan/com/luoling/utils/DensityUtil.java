@@ -1,6 +1,7 @@
 package yuan.com.luoling.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 import java.util.List;
@@ -33,14 +34,16 @@ public class DensityUtil {
      * @param musicFiles 歌曲数据类
      * @param files      歌词文件集合
      */
-    public static void matchingLRC(MusicFiles musicFiles, List<File> files) {
+    public static MusicFiles matchingLRC(MusicFiles musicFiles, List<File> files) {
         for (File f : files) {
-            String fileName = f.getName().replace(getExtensionName(f.getName()), "");
+            String fileName = f.getName().replace(getExtensionName(f.getName()), "").replace(".", "");
+            Log.e("DensityUtils", "DensityUtils" + "file==" + fileName);
             if (musicFiles.getName().equals(fileName)) {
                 musicFiles.setLrcURL(f.getAbsolutePath());
-                return;
+                return musicFiles;
             }
         }
+        return musicFiles;
     }
 
     /**

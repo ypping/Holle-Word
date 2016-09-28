@@ -11,6 +11,7 @@ import org.xutils.db.table.TableEntity;
 import org.xutils.x;
 
 import yuan.com.luoling.services.DBServices;
+import yuan.com.luoling.services.MusicServices;
 
 
 /**
@@ -19,10 +20,26 @@ import yuan.com.luoling.services.DBServices;
 public class MyApplication extends Application {
     private final String TAG = "MyApplication";
     private static Context context;
+    /**
+     * 自定义application
+     */
     private static MyApplication myApplication;
+    /**
+     * 数据库的链接
+     */
     private DbManager.DaoConfig daoConfig;
+    /**
+     * 数据库管理
+     */
     private DbManager dbManager;
+    /**
+     * 数据库的服务类
+     */
     private DBServices dbServices;
+    /**
+     * 音乐的服务类
+     */
+    private MusicServices musicServices;
     /**
      * 是否是第一次运行
      */
@@ -68,8 +85,8 @@ public class MyApplication extends Application {
      */
     public boolean isFristRun() {
         SharedPreferences sharedPreferences = getSharedPreferences("test", Context.MODE_PRIVATE);
-        boolean isshare = sharedPreferences.getBoolean("welcome", false);
-        return !isshare;
+        boolean isshare = sharedPreferences.getBoolean("welcome", true);
+        return isshare;
     }
 
     /**
@@ -78,7 +95,7 @@ public class MyApplication extends Application {
     public void onFirist() {
         SharedPreferences sharedPreferences = getSharedPreferences("test", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("welcome", true);
+        editor.putBoolean("welcome", false);
         editor.commit();
     }
 
@@ -112,4 +129,11 @@ public class MyApplication extends Application {
         this.dbServices = dbServices;
     }
 
+    public MusicServices getMusicServices() {
+        return musicServices;
+    }
+
+    public void setMusicServices(MusicServices musicServices) {
+        this.musicServices = musicServices;
+    }
 }

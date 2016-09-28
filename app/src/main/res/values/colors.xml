@@ -3,6 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorAlipe">#55F81B1B</color>
 
     <color name="white">#fff</color>
 
@@ -70,7 +71,6 @@
     <color name="promotionbar">#f7564f</color>
     <color name="topicbar">#87c718</color>
     <color name="btn_blue">#00a1e7</color>
-
 
 
     <color name="bg_red_shadow">#a32019</color>

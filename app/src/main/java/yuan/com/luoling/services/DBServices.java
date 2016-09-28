@@ -20,7 +20,12 @@ import yuan.com.luoling.db.DBCursorUtils;
  * Created by YUAN on 2016/9/8.
  */
 public class DBServices extends Service {
+    private final String TAG = "DBServices";
+    /**
+     * 绑定service对象
+     */
     private ImageBinder imageBinder = new ImageBinder();
+
 
     @Nullable
     @Override
@@ -40,6 +45,7 @@ public class DBServices extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
     }
 
     @Override

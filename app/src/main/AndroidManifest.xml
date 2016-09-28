@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
 
     <meta-data
         android:name="design_width"
@@ -20,6 +21,9 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
+    <permission
+        android:name="yuan.com.luoling.permission.My_permission"
+        android:protectionLevel="normal" />
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -48,14 +52,17 @@
         <activity
             android:name=".ui.activity.ImageShow"
             android:label="photo"
-            android:theme="@style/android:Theme.DeviceDefault.NoActionBar.Fullscreen" />
+            android:theme="@style/Theme.AppStartImage" />
         <activity
             android:name=".ui.activity.HomeActivity"
-            android:launchMode="singleTask"
-            android:theme="@style/android:Theme.DeviceDefault.NoActionBar.Fullscreen" />
+            android:launchMode="singleTask" />
         <activity android:name=".ui.activity.VideoActivity" />
         <activity android:name=".ui.activity.WelcomeActivity" />
         <activity android:name=".ui.activity.MusicActivity" />
+        <activity
+            android:name=".ui.activity.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <!--share SDK-->
         <activity
             android:name="com.mob.tools.MobUIShell"
@@ -108,12 +115,14 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity
-            android:name=".ui.activity.LoginActivity"
-            android:label="@string/title_activity_login" />
 
-        <service android:name=".services.DBServices" />
 
+        <service
+            android:name=".services.DBServices"
+            android:permission="yuan.com.luoling.permission.My_permission" />
+        <service
+            android:name=".services.MusicServices"
+            android:permission="yuan.com.luoling.permission.My_permission" />
     </application>
 
 </manifest>

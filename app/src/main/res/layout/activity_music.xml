@@ -2,12 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@mipmap/loling_welcome"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/bar_height0"
-        android:background="#77565346">
+        android:background="@color/colorAlipe">
 
         <ImageView
             android:id="@+id/menu"
@@ -24,61 +26,86 @@
             android:layout_centerInParent="true" />
     </RelativeLayout>
 
-    <android.support.v7.widget.CardView
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/musicFrame"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_0dp"
+            android:layout_weight="0"></FrameLayout>
+
+        <yuan.com.luoling.ui.widget.LRCView
+            android:id="@+id/:musicLRC"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_0dp"
+            android:layout_weight="4" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/space_0dp"
+            android:layout_weight="1"
             android:orientation="vertical">
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/space_0dp"
-                android:layout_weight="4"></FrameLayout>
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/margin_8dp"
+                android:paddingLeft="@dimen/padding_16dp"
+                android:paddingRight="@dimen/padding_16dp"
+                android:paddingTop="@dimen/margin_8dp">
+
+                <TextView
+                    android:id="@+id/startTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    android:layout_width="@dimen/space_0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/endTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/space_0dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_weight="2"
+                android:gravity="center">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/leftMusic"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingBottom="@dimen/margin_8dp"
-                    android:paddingLeft="@dimen/padding_16dp"
-                    android:paddingRight="@dimen/padding_16dp"
-                    android:paddingTop="@dimen/margin_8dp">
+                    android:layout_margin="@dimen/padding_16dp"
+                    android:src="@mipmap/left_music" />
 
-                    <TextView
-                        android:id="@+id/startTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                <CheckBox
+                    android:id="@+id/stopMusic"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_margin="@dimen/padding_16dp"
+                    android:background="@drawable/select_music_stop_on_start"
+                    android:button="@null" />
 
-                    <SeekBar
-                        android:id="@+id/seekBar"
-                        android:layout_width="@dimen/space_0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:id="@+id/endTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/space_0dp"
-                    android:layout_weight="1">
-
-                </LinearLayout>
+                <ImageView
+                    android:id="@+id/rightMusic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/padding_16dp"
+                    android:src="@mipmap/right_music" />
             </LinearLayout>
         </LinearLayout>
+    </LinearLayout>
 
-    </android.support.v7.widget.CardView>
 </RelativeLayout>

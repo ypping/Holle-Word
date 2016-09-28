@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 
@@ -39,12 +40,12 @@ public class ImageShow extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityBar.setStatusBarColor(this, R.color.colorAlipe);
         setContentView(R.layout.image_show);
-        ActivityBar.setTranslucent(this);
+
         viewPager = (ViewPager) findViewById(R.id.image_show_image);
         back = findViewById(R.id.back);
         data = ListDate.getListData();
-
         Intent intent = getIntent();
         position = intent.getExtras().getInt("position");
         myPagerAdapter = new MyPagerAdapter();
@@ -109,18 +110,19 @@ public class ImageShow extends Activity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             final ImageView v = new ImageView(ImageShow.this);
-
+            v.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
             v.setId(position);
             if (data.getImageFiles().get(position).getName().toLowerCase().endsWith(".gif")) {
                 Glide.with(ImageShow.this).load(data.getImageFiles().get(position).getPath())
                         .asGif().into(v);
             } else {
 
-                Glide.with(ImageShow.this).load(data.getImageFiles().get(position).getPath()).fitCenter()
+                Glide.with(ImageShow.this).load(data.getImageFiles().get(position).getPath()).placeholder(R.mipmap.moren)
                         .skipMemoryCache(false).into(v);
             }
 
-            container.addView(v, -1, -1);
+            container.addView(v);
             return v;
         }
 

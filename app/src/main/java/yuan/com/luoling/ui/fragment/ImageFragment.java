@@ -13,10 +13,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.ScaleAnimation;
 
 import org.xutils.ex.DbException;
 
@@ -48,7 +44,7 @@ public class ImageFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-         getActivity().setTheme(R.style.Theme_AppStartLoad);
+        getActivity().setTheme(R.style.Theme_AppStartLoad);
         super.onCreate(savedInstanceState);
     }
 
@@ -74,7 +70,6 @@ public class ImageFragment extends Fragment {
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
         SpacesItemDecoration decoration = new SpacesItemDecoration(DensityUtil.dip2px(getActivity(), 5));
         recyclerView.addItemDecoration(decoration);
-        //  Log.e(TAG, TAG + ":" + data.getImageFiles().size());
         viewAdapter = new ImageRecylerViewAdapter(getActivity(), data);
         /**
          * item的点击事件

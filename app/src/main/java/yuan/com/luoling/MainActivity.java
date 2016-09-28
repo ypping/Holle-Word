@@ -20,8 +20,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import org.xutils.db.sqlite.SqlInfo;
-import org.xutils.db.table.DbModel;
 import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
@@ -77,7 +75,7 @@ public class MainActivity extends Activity {
     }
 
     private void setData() {
-
+        Log.i("intentType", "isFristrun" + MyApplication.getApp().isFristRun());
         if (MyApplication.getApp().isFristRun()) {
             Intent intent = new Intent(this, WelcomeActivity.class);
             startActivity(intent);

@@ -14,6 +14,7 @@ import yuan.com.luoling.bean.MusicFiles;
 import yuan.com.luoling.ui.fragment.ImageFragment;
 import yuan.com.luoling.ui.fragment.MusicFragment;
 import yuan.com.luoling.ui.fragment.VideoFragment;
+import yuan.com.luoling.utils.ActivityBar;
 
 /**
  * Created by YUAN on 2016/9/6.
@@ -32,6 +33,7 @@ public class HomeActivity extends FragmentActivity implements MusicFragment.OnLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityBar.setStatusBarColor(this, R.color.promotionbar);
         setContentView(R.layout.activity_home);
         initView();
     }
@@ -60,7 +62,7 @@ public class HomeActivity extends FragmentActivity implements MusicFragment.OnLi
         fragmentTransaction.hide(fragments[1]);
         fragmentTransaction.hide(fragments[2]);
         //fragment之间的动画效果
-        fragmentTransaction.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_out);
+        fragmentTransaction.setCustomAnimations(R.anim.close_exit, R.anim.close_enter);
         fragmentTransaction.commit();
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override

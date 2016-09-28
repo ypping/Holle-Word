@@ -13,6 +13,7 @@ import org.xutils.ex.DbException;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import yuan.com.luoling.MyApplication;
@@ -26,7 +27,7 @@ import yuan.com.luoling.db.MyDbService;
 import yuan.com.luoling.services.DBServices;
 import yuan.com.luoling.ui.fragment.WelcomeFragment;
 import yuan.com.luoling.utils.DensityUtil;
-import yuan.com.luoling.utils.FileUtils;
+import yuan.com.luoling.utils.LuoLingComparator;
 
 /**
  * Created by YUAN on 2016/9/9.
@@ -48,10 +49,6 @@ public class WelcomeActivity extends FragmentActivity {
      * 引导页的fragment
      */
     private WelcomeFragment welcomeFragment;
-    /**
-     * 监听gif动画的回调，设定为几，就显示多少图片
-     */
-    private int i = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,18 +73,18 @@ public class WelcomeActivity extends FragmentActivity {
 
         @Override
         public void onContinueToGIF() {
-
-            if (i < 5) {
+            for (int j = 0; j < 4; j++) {
                 FragmentTransaction fragmentTransaction = manager.beginTransaction();
                 welcomeFragment = new WelcomeFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("position", j);
+                welcomeFragment.setArguments(bundle);
                 welcomeFragment.setContinueToGIF(upDataImageFile);
                 fragmentTransaction.replace(R.id.wecome_Fragme, welcomeFragment);
                 fragmentTransaction.commit();
-                i++;
-            } else {
-                Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
-                startActivity(intent);
             }
+            Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+            startActivity(intent);
         }
     };
 
@@ -102,11 +99,11 @@ public class WelcomeActivity extends FragmentActivity {
                 imageFiles = MyApplication.getApp().getDbServices().fistApp(imageFiles);
                 Log.i("services", imageFiles.size() + "");
                 try {
-                 /*   //将图片排序以图片大小进行排序
+                    //将图片排序以图片大小进行排序
                     LuoLingComparator comparatorImage = new LuoLingComparator(ImageFiles.class);
                     Collections.sort(imageFiles, comparatorImage);
                     //倒叙处理
-                    Collections.reverse(imageFiles);*/
+                    Collections.reverse(imageFiles);
                     ListDate.getListData().setImageFiles(imageFiles);
                     Log.e(TAG, TAG + "mdd" + imageFiles.size());
                     myDbService.addImageDB(imageFiles);
@@ -128,11 +125,6 @@ public class WelcomeActivity extends FragmentActivity {
                     Log.i("services", String.valueOf(MyApplication.getApp().getDbServices()));
                     List<MusicFiles> musicFiles = MyApplication.getApp().getDbServices().curcorMusic(WelcomeActivity.this);
                     Log.i("services", musicFiles.size() + "");
-                   /* //将音乐以大小进行排序
-                    LuoLingComparator comparatorMusic = new LuoLingComparator(MusicFiles.class);
-                    Collections.sort(musicFiles, comparatorMusic);
-                    //倒叙处理
-                    Collections.reverse(musicFiles);*/
                     sequenceLRC(musicFiles);
                 }
             }
@@ -183,5 +175,4 @@ public class WelcomeActivity extends FragmentActivity {
             }
         }).start();
     }
-
 }
