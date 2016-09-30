@@ -6,13 +6,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.media.MediaPlayer;
-import android.media.TimedText;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -27,22 +23,19 @@ import java.util.Set;
 
 import yuan.com.luoling.MyApplication;
 import yuan.com.luoling.bean.LrcData;
-import yuan.com.luoling.services.DBServices;
+import yuan.com.luoling.services.MusicServices;
 
 /**
  * Created by YUAN on 2016/9/27.
  */
 
 public class LRCView extends View {
-    private final String TAG = "LRCView";
     private LrcData mLrc;
     private Integer currentTime;
     private Integer currentIndex;
-    private MediaPlayer mPlayer;
     private SeekBar mSeekBar;
     private TextView currentTimeText;
     private TextView musicTimeText;
-    private MediaPlayer.OnCompletionListener playComletion;
     private boolean isChanging;
     private float mX;
     private float mY;
@@ -66,7 +59,7 @@ public class LRCView extends View {
         p1.setColor(Color.WHITE);
         p2.setColor(Color.YELLOW);
         space = p1.getTextSize() * 2.3f;
-        MyApplication.getApp().getDbServices().setMusicListener(musicListener);
+        MyApplication.getApp().getMusicServices().setMusicListener(musicListener);
     }
 
     public LRCView(Context context, AttributeSet attrs) {
@@ -76,7 +69,7 @@ public class LRCView extends View {
         p1.setColor(Color.WHITE);
         p2.setColor(Color.YELLOW);
         space = p1.getTextSize() * 2.3f;
-        MyApplication.getApp().getDbServices().setMusicListener(musicListener);
+        MyApplication.getApp().getMusicServices().setMusicListener(musicListener);
     }
 
     public LRCView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -86,7 +79,7 @@ public class LRCView extends View {
         p1.setColor(Color.WHITE);
         p2.setColor(Color.YELLOW);
         space = p1.getTextSize() * 2.3f;
-        MyApplication.getApp().getDbServices().setMusicListener(musicListener);
+        MyApplication.getApp().getMusicServices().setMusicListener(musicListener);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -97,15 +90,7 @@ public class LRCView extends View {
         p1.setColor(Color.WHITE);
         p2.setColor(Color.YELLOW);
         space = p1.getTextSize() * 2.3f;
-        MyApplication.getApp().getDbServices().setMusicListener(musicListener);
-    }
-
-    public MediaPlayer getmPlayer() {
-        return mPlayer;
-    }
-
-    public void setmPlayer(MediaPlayer mPlayer) {
-        this.mPlayer = mPlayer;
+        MyApplication.getApp().getMusicServices().setMusicListener(musicListener);
     }
 
     public float getTextSize() {
@@ -216,27 +201,12 @@ public class LRCView extends View {
         }
     }
 
-    public MediaPlayer getPlayer() {
-        return mPlayer;
-    }
-
-    public void setPlayMusic(String path)
-            throws IllegalArgumentException, SecurityException, IllegalStateException, IOException {
-        intiMediaPlay();
-        mPlayer.setDataSource(path);
-        mPlayer.prepare();
+    public void setPlayMusic() {
+        play();
         intiOtherView();
     }
 
-    public void setPlayMusic(Uri uri)
-            throws IllegalArgumentException, SecurityException, IllegalStateException, IOException {
-        intiMediaPlay();
-        mPlayer.setDataSource(getContext(), uri);
-        mPlayer.prepare();
-        intiOtherView();
-    }
-
-    private void intiMediaPlay() {
+   /* private void intiMediaPlay() {
         if (mPlayer == null) {
             mPlayer = new MediaPlayer();
             mPlayer.setOnCompletionListener(playComletion);
@@ -244,14 +214,14 @@ public class LRCView extends View {
         } else
             mPlayer.stop();
         mPlayer.reset();
-    }
+    }*/
 
     private void intiOtherView() {
 
         if (musicTimeText != null)
-            musicTimeText.setText(parseTimeToString(mPlayer.getDuration()));
+            musicTimeText.setText(parseTimeToString(MyApplication.getApp().getMusicServices().getMediaPlayer().getDuration()));
         if (mSeekBar != null) {
-            mSeekBar.setProgress(mPlayer.getCurrentPosition());
+            mSeekBar.setProgress(MyApplication.getApp().getMusicServices().getMediaPlayer().getCurrentPosition());
         }
         if (currentTimeText != null) {
             currentTimeText.setText("00:00");
@@ -259,7 +229,6 @@ public class LRCView extends View {
     }
 
     public void setLRCPath(String path) throws IOException {
-
         LrcData lrc = LrcData.loadLRCFile(path);
         setLRC(lrc);
     }
@@ -349,7 +318,7 @@ public class LRCView extends View {
         if (currentTime != ct) {
             currentTime = ct;
             invalidate();
-            if (mPlayer.isPlaying())
+            if (MyApplication.getApp().getMusicServices().getMediaPlayer().isPlaying())
                 animotion(md);
         }
     }
@@ -357,14 +326,17 @@ public class LRCView extends View {
     Runnable mRun = new Runnable() {
         @Override
         public void run() {
-            mHandler.sendEmptyMessage(mPlayer.getCurrentPosition());
+            mHandler.sendEmptyMessage(MyApplication.getApp().getMusicServices().getMediaPlayer().getCurrentPosition());
         }
     };
     @SuppressLint("HandlerLeak")
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(android.os.Message msg) {
-            if (mPlayer.isPlaying()) {
+            if (MyApplication.getApp().getMusicServices() == null) {
+                return;
+            }
+            if (MyApplication.getApp().getMusicServices().getMediaPlayer().isPlaying()) {
                 setCurrentTime(msg.what);
                 mHandler.postDelayed(mRun, 10);
             }
@@ -374,10 +346,10 @@ public class LRCView extends View {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            if (mPlayer == null)
+            if (MyApplication.getApp().getMusicServices() == null)
                 return;
-            mPlayer.seekTo(seekBar.getProgress());
-            if (!mPlayer.isPlaying()) {
+            MyApplication.getApp().getMusicServices().getMediaPlayer().seekTo(seekBar.getProgress());
+            if (!MyApplication.getApp().getMusicServices().getMediaPlayer().isPlaying()) {
                 setCurrentTime(seekBar.getProgress());
             }
             isChanging = false;
@@ -395,41 +367,16 @@ public class LRCView extends View {
     };
 
     public void play() {
-        if (animation != null && nextTime - mPlayer.getCurrentPosition() > 0) {
-            animotion(nextTime - mPlayer.getCurrentPosition());
+        if (animation != null && nextTime - MyApplication.getApp().getMusicServices().getMediaPlayer().getCurrentPosition() > 0) {
+            animotion(nextTime - MyApplication.getApp().getMusicServices().getMediaPlayer().getCurrentPosition());
         }
-        mPlayer.start();
         if (mSeekBar != null)
-            mSeekBar.setMax(mPlayer.getDuration());
+            mSeekBar.setMax(MyApplication.getApp().getMusicServices().getMediaPlayer().getDuration());
         mHandler.postDelayed(mRun, 10);
 
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public void goOn(String path) throws IOException {
-        if (mPlayer == null) {
-            mPlayer = new MediaPlayer();
-        }
-        mPlayer.reset();
-        mPlayer.setDataSource(path);
-        mPlayer.prepare();
-
-        mPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
-            @Override
-            public void onSeekComplete(MediaPlayer mp) {
-                Log.e(TAG, TAG + ">>" + mp.isPlaying());
-            }
-        });
-        mPlayer.setOnTimedTextListener(new MediaPlayer.OnTimedTextListener() {
-            @Override
-            public void onTimedText(MediaPlayer mp, TimedText text) {
-                Log.e(TAG, TAG + ">>" + mp.isPlaying() + "text" + text.toString());
-            }
-        });
-    }
-
     public void pause() {
-        mPlayer.pause();
         if (animation != null) {
             animation.cancel();
             isCancelAnim = true;
@@ -438,9 +385,9 @@ public class LRCView extends View {
     }
 
     public void stop() {
-        mPlayer.stop();
         if (animation != null) {
             animation.cancel();
+            lastOff = animOff;
         }
     }
 
@@ -477,12 +424,12 @@ public class LRCView extends View {
     @SuppressLint("NewApi")
     public void bindPlayBtnAndTimeText(View play, TextView currentT, TextView lengthT) {
         musicTimeText = lengthT;
-        if (musicTimeText != null && mPlayer != null) {
-            musicTimeText.setText(parseTimeToString(mPlayer.getDuration()));
+        if (musicTimeText != null && MyApplication.getApp().getMusicServices().getMediaPlayer() != null) {
+            musicTimeText.setText(parseTimeToString(MyApplication.getApp().getMusicServices().getMediaPlayer().getDuration()));
         }
         currentTimeText = currentT;
-        if (currentTimeText != null && mPlayer != null) {
-            currentTimeText.setText(parseTimeToString(mPlayer.getCurrentPosition()));
+        if (currentTimeText != null && MyApplication.getApp().getMusicServices().getMediaPlayer() != null) {
+            currentTimeText.setText(parseTimeToString(MyApplication.getApp().getMusicServices().getMediaPlayer().getCurrentPosition()));
         }
     }
 
@@ -562,29 +509,11 @@ public class LRCView extends View {
         return (int) (spValue * fontScale + 0.5f);
     }
 
-    /**
-     * @param listener
-     */
-    public void setOnCompletionListener(MediaPlayer.OnCompletionListener listener) {
-        playComletion = listener;
-        if (mPlayer != null) {
-            mPlayer.setOnCompletionListener(playComletion);
-            Log.i("music", "set listener");
-        }
-    }
-
-    DBServices.MusicListener musicListener = new DBServices.MusicListener() {
+    MusicServices.MusicListener musicListener = new MusicServices.MusicListener() {
 
         @Override
-        public void playMusic(MediaPlayer mediaPlayer, String path) {
-            mPlayer = mediaPlayer;
-            try {
-                setPlayMusic(path);
-                play();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        public void playMusic() {
+            setPlayMusic();
         }
 
         @Override
@@ -598,14 +527,39 @@ public class LRCView extends View {
         }
 
         @Override
-        public void goOnMusic() {
-            play();
+        public void goOnMusic(int time) {
+            setCurrentTime(time);
         }
 
         @Override
-        public void runDirection(String path, int playPosition) {
-
+        public void runDirection(String path) {
+            if (path == null) {
+                notLRCFile.onNotLrcFile();
+                return;
+            }
+            try {
+                setLRCPath(path);
+                notLRCFile.onHaveLrcFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     };
+    /**
+     * 没有找到lrc文件的监听
+     */
+    private NotLRCFile notLRCFile;
+
+    /**
+     * 没有找到lec的接口
+     */
+    public interface NotLRCFile {
+        void onNotLrcFile();
+
+        void onHaveLrcFile();
+    }
+
+    public void setNotLRCFile(NotLRCFile notLRCFile) {
+        this.notLRCFile = notLRCFile;
+    }
 }

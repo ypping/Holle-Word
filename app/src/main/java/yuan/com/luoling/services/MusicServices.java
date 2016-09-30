@@ -12,19 +12,23 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+import yuan.com.luoling.MyApplication;
+import yuan.com.luoling.bean.ListDate;
 import yuan.com.luoling.bean.MusicFiles;
 
 /**
+ * 音乐服务类
  * Created by YUAN on 2016/9/28.
  */
 
 public class MusicServices extends Service {
     private final String TAG = "MusicServices";
+    private Context context;
     /**
      * 服务的对象
      */
@@ -40,7 +44,7 @@ public class MusicServices extends Service {
     /**
      * 当前的音乐集合
      */
-    private List<MusicFiles> musicFiles = new ArrayList<>();
+    private List<MusicFiles> musicFiles = ListDate.getListData().getMusicFiles();
     /**
      * 播放的歌曲的当前位置
      */
@@ -53,10 +57,14 @@ public class MusicServices extends Service {
      * 音乐接口
      */
     private MusicListener musicListener;
-    /**
-     * 电话挂断的监听
-     */
-    public PhoneDropped phoneDropped;
+
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
+
+    public void setMediaPlayer(MediaPlayer mediaPlayer) {
+        this.mediaPlayer = mediaPlayer;
+    }
 
     public class MusicBinder extends Binder {
         public Service getService() {
@@ -83,15 +91,11 @@ public class MusicServices extends Service {
         super.onCreate();
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         telephonyManager.listen(new MyPhoneListener(), PhoneStateListener.LISTEN_CALL_STATE);
-        setPhoneDropped(new PhoneDropped() {
-            @Override
-            public void dropped() {
-                if (playPosition > 0 && musicFiles.get(position).getPath() != null) {
-                    musicListener.runDirection(musicFiles.get(position).getPath(), playPosition);
-                    playPosition = 0;
-                }
-            }
-        });
+        if (mediaPlayer == null) {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setOnErrorListener(errorListener);
+            mediaPlayer.setOnCompletionListener(onCompletionListener);
+        }
     }
 
     @Override
@@ -113,20 +117,32 @@ public class MusicServices extends Service {
     }
 
     /**
-     * 播放音乐
+     * 设置音乐
      *
-     * @param list     音乐列表
      * @param position 位置
      * @throws IOException 将会抛出一个播放异常
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public void playMusic(List<MusicFiles> list, int position) {
-
-        musicFiles = list;
+    public void setPlayMusic(int position, Context context) throws IOException {
+        this.context = context;
         this.position = position;
-        musicListener.playMusic(mediaPlayer, list.get(position).getPath());
-        mediaPlayer.start();
+        if (isPlay) {
+            MyApplication.getApp().getMusicServices().setMediaPlayer(mediaPlayer);
+            isPlay = true;
+            playMusic(musicFiles.get(position).getPath(), null, context);
+        } else if (mediaPlayer.isPlaying()) {
+            pauseMusic();
+        } else {
+            startMusic();
+        }
     }
+
+    public void setPlayMusic(Uri uri, Context context)
+            throws IllegalArgumentException, SecurityException, IllegalStateException, IOException {
+        mediaPlayer.setDataSource(context, uri);
+        mediaPlayer.prepare();
+    }
+
 
     /**
      * 连续播放下一首
@@ -136,7 +152,6 @@ public class MusicServices extends Service {
     private MediaPlayer NextMusic(Context context) {
         position += position;
         mediaPlayer = MediaPlayer.create(context, Uri.parse(musicFiles.get(position).getPath()));
-
         mediaPlayer.reset();
         mediaPlayer.start();
         mediaPlayer.release();
@@ -150,7 +165,7 @@ public class MusicServices extends Service {
      * @throws IOException 将会抛出一个播放异常
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public void playMusic(int prepaerd) throws IOException {
+    public void setPlayMusic(int prepaerd) throws IOException {
         mediaPlayer.reset();// 把各项参数恢复到初始状态
         /**
          *  通过MediaPlayer.setDataSource() 的方法,将URL或文件路径以字符串的方式传入.使用setDataSource ()方法时,要注意以下三点:
@@ -176,18 +191,25 @@ public class MusicServices extends Service {
      */
     public void leftMusic(int position) {
         if (null == mediaPlayer) {
-
-        } else if (mediaPlayer.isPlaying()) {
+            mediaPlayer = new MediaPlayer();
+            MyApplication.getApp().getMusicServices().setMediaPlayer(mediaPlayer);
+        }
+        if (mediaPlayer.isPlaying()) {
             if (position >= 0) {
                 this.position = position;
                 mediaPlayer.reset();
                 try {
                     mediaPlayer.setDataSource(musicFiles.get(position).getPath());
+                    musicListener.runDirection(musicFiles.get(position).getLrcURL());
                     mediaPlayer.prepare();
+                    startMusic();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+        } else {
+            Log.e(TAG, TAG + "left" + musicFiles.get(position).getLrcURL());
+            musicListener.runDirection(musicFiles.get(position).getLrcURL());
         }
     }
 
@@ -205,11 +227,31 @@ public class MusicServices extends Service {
                 mediaPlayer.reset();
                 try {
                     mediaPlayer.setDataSource(musicFiles.get(position).getPath());
+                    musicListener.runDirection(musicFiles.get(position).getLrcURL());
                     mediaPlayer.prepare();
+                    startMusic();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+        } else {
+            musicListener.runDirection(musicFiles.get(position).getLrcURL());
+            Log.e(TAG, TAG + "right" + musicFiles.get(position).getLrcURL());
+        }
+    }
+
+    public void playMusic(@Nullable String path, @Nullable Uri uri, Context context) {
+        try {
+            if (path != null) {
+                mediaPlayer.setDataSource(path);
+            } else if (uri != null) {
+                mediaPlayer.setDataSource(context, uri);
+            }
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+            musicListener.playMusic();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -217,6 +259,7 @@ public class MusicServices extends Service {
      * 暂停音乐
      */
     public void pauseMusic() {
+        mediaPlayer.pause();
         musicListener.pauseMusic();
     }
 
@@ -224,7 +267,26 @@ public class MusicServices extends Service {
      * 继续播放音乐
      */
     public void startMusic() {
-        musicListener.goOnMusic();
+        if (mediaPlayer == null) {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.reset();
+            mediaPlayer.setOnCompletionListener(onCompletionListener);
+            mediaPlayer.setOnPreparedListener(new PreparedListener(0));
+        } else if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+            musicListener.goOnMusic(playPosition);
+        } else {
+            mediaPlayer.reset();
+            try {
+                mediaPlayer.setDataSource(musicFiles.get(position).getPath());
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+                musicListener.goOnMusic(playPosition);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     /**
@@ -236,6 +298,7 @@ public class MusicServices extends Service {
         if (null != mediaPlayer) {
             mediaPlayer.stop();
             mediaPlayer.reset();
+            musicListener.stopMusic();
         }
     }
 
@@ -249,13 +312,18 @@ public class MusicServices extends Service {
                 case TelephonyManager.CALL_STATE_RINGING://电话来了
                     if (mediaPlayer.isPlaying()) {
                         playPosition = mediaPlayer.getCurrentPosition();// 获得当前播放位置
-                        mediaPlayer.stop();
+                        try {
+                            stopMusic();
+                            musicListener.stopMusic();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                     break;
                 case TelephonyManager.CALL_STATE_IDLE: //通话结束
                     if (playPosition > 0 && musicFiles.get(playPosition).getPath() != null) {
                         try {
-                            playMusic(playPosition);
+                            setPlayMusic(playPosition);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -271,32 +339,28 @@ public class MusicServices extends Service {
      * 实现一个OnPrepareLister接口,当音乐准备好的时候开始播放
      */
     private final class PreparedListener implements MediaPlayer.OnPreparedListener {
-        private int positon;
+        private int playPosition;
 
-        public PreparedListener(int positon) {
-            this.positon = positon;
+        public PreparedListener(int position) {
+            this.playPosition = position;
         }
 
         @Override
         public void onPrepared(MediaPlayer mp) {
             mediaPlayer.start();    //开始播放
-            if (positon > 0) {    //如果音乐不是从头播放
-                mediaPlayer.seekTo(positon);
+            if (playPosition > 0) {    //如果音乐不是从头播放
+                mediaPlayer.seekTo(playPosition);
             }
         }
     }
 
-
-    public void setPhoneDropped(PhoneDropped phoneDropped) {
-        this.phoneDropped = phoneDropped;
-    }
-
-    /**
-     * 电话挂断的一个监听
-     */
-    public interface PhoneDropped {
-        void dropped();
-    }
+    MediaPlayer.OnCompletionListener onCompletionListener = new MediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            mp.stop();
+            mp.release();
+        }
+    };
 
     public void setMusicListener(MusicListener musicListener) {
         this.musicListener = musicListener;
@@ -309,7 +373,7 @@ public class MusicServices extends Service {
         /**
          * 播放的方法
          */
-        void playMusic(MediaPlayer mediaPlayer, String path);
+        void playMusic();
 
         /**
          * 暂停的方法
@@ -324,12 +388,13 @@ public class MusicServices extends Service {
         /**
          * 继续的方法
          */
-        void goOnMusic();
+        void goOnMusic(int time);
 
         /**
          * 播放音乐是上一首还是下一首
          */
-        void runDirection(String path, int playPosition);
+        void runDirection(String path);
+
     }
 
 }

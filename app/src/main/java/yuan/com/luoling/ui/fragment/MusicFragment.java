@@ -1,8 +1,11 @@
 package yuan.com.luoling.ui.fragment;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,9 +17,11 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import yuan.com.luoling.MyApplication;
 import yuan.com.luoling.R;
 import yuan.com.luoling.bean.ListDate;
 import yuan.com.luoling.bean.MusicFiles;
+import yuan.com.luoling.services.MusicServices;
 import yuan.com.luoling.ui.activity.MusicActivity;
 import yuan.com.luoling.ui.adapter.MusicRecyclerViewAdapter;
 
@@ -83,6 +88,10 @@ public class MusicFragment extends Fragment {
         adapter.setOnItemClickListener(new MusicRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                if (MyApplication.getApp().getMusicServices() == null) {
+                    Intent intent = new Intent(getActivity(), MusicServices.class);
+                    getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+                }
                 Intent intent = new Intent(getActivity(), MusicActivity.class);
                 intent.putExtra("position", position);
                 startActivity(intent);
@@ -128,5 +137,24 @@ public class MusicFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(MusicFiles musicFiles);
+    }
+
+    ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.i("services", ((MusicServices.MusicBinder) service).getService().getPackageName() + "name  " + name);
+            MyApplication.getApp().setMusicServices((MusicServices) ((MusicServices.MusicBinder) service).getService());
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            MyApplication.getApp().setMusicServices(null);
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        getActivity().unbindService(serviceConnection);
+        super.onDestroy();
     }
 }

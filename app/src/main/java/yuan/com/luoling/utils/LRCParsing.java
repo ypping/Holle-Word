@@ -1,13 +1,16 @@
 package yuan.com.luoling.utils;
 
-import java.io.BufferedReader;
+import android.util.Log;
+
+import org.mozilla.universalchardet.UniversalDetector;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,14 +46,31 @@ public class LRCParsing {
      * @return
      */
     public LrcData rarserLrc(InputStream inputStream, LrcData lrcData, String path) {
-        String coding = FileUtils.getFileCharsetSimple(path);
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, coding));
-            String str = null;
-            //while循环用于读取每一行信息，直到读完跳出当前操作
-            while ((str = reader.readLine()) != null) {
-                decodeLine(str, lrcData);
+            UniversalDetector detector = new UniversalDetector(null);
+            byte buf[] = new byte[4096];
+            int len = 0;
+            ArrayList<Byte> buffer = new ArrayList<Byte>();
+            while ((len = inputStream.read(buf)) != -1 && !detector.isDone()) {
+                detector.handleData(buf, 0, len);
+                for (int i = 0; i < len; i++) {
+                    buffer.add(buf[i]);
+                }
             }
+            detector.dataEnd();
+            String encoding = detector.getDetectedCharset();
+            detector.reset();
+            Log.i("UniversalDetector", "encoding:" + encoding);
+            byte[] d = new byte[buffer.size()];
+            for (int i = 0; i < d.length; i++) {
+                d[i] = buffer.get(i);
+            }
+            String data = new String(d, encoding);
+            String lrc[] = data.split("[[\r\n][\n]]");
+            for (String lin : lrc) {
+                decodeLine(lin, lrcData);
+            }
+            inputStream.close();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {

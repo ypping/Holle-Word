@@ -50,4 +50,5 @@ dependencies {
     compile 'jp.wasabeef:glide-transformations:1.0.6'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.2'
+    compile files('libs/juniversalchardet-1.0.3.jar')
 }

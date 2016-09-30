@@ -1,13 +1,7 @@
 package yuan.com.luoling.ui.activity;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -37,7 +31,7 @@ import yuan.com.luoling.utils.TimeUtils;
 public class MusicActivity extends Activity {
     private final String TAG = "MusicActivity";
     private View munu, leftMusic, reihtMusic;
-    private TextView title, startTime, endTime;
+    private TextView title, startTime, endTime, textLrc;
     private FrameLayout frameLayout;
     private SeekBar seekBar;
     private CheckBox checkBox;
@@ -66,18 +60,33 @@ public class MusicActivity extends Activity {
         title = (TextView) findViewById(R.id.title);
         startTime = (TextView) findViewById(R.id.startTime);
         endTime = (TextView) findViewById(R.id.endTime);
-        frameLayout = (FrameLayout) findViewById(R.id.musicFrame);
+        //frameLayout = (FrameLayout) findViewById(R.id.musicFrame);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
         checkBox = (CheckBox) findViewById(R.id.stopMusic);
         lrcView = (LRCView) findViewById(R.id._musicLRC);
+        textLrc = (TextView) findViewById(R.id.text_lrc);
         lrcView.bindSeekBar(seekBar);
-        lrcView.setOnCompletionListener(onCompletionListener);
         try {
+            Log.e(TAG, TAG + "lrcView" + musicFiles.get(position).getLrcURL());
             lrcView.setLRCPath(musicFiles.get(position).getLrcURL());
+
             //
         } catch (IOException e) {
             e.printStackTrace();
         }
+        lrcView.setNotLRCFile(new LRCView.NotLRCFile() {
+            @Override
+            public void onNotLrcFile() {
+                textLrc.setVisibility(View.VISIBLE);
+                lrcView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onHaveLrcFile() {
+                textLrc.setVisibility(View.GONE);
+                lrcView.setVisibility(View.VISIBLE);
+            }
+        });
         title.setText(musicFiles.get(position).getName());
         startTime.setText(String.valueOf(00.00));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
@@ -97,16 +106,11 @@ public class MusicActivity extends Activity {
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (services == null) {
-                    Intent intent = new Intent(MusicActivity.this, MusicServices.class);
-                    bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-                }
-                if (lrcView.getmPlayer() == null) {
-                    services.playMusic(musicFiles, position);
-                } else if (lrcView.getmPlayer().isPlaying()) {
-                    services.pauseMusic();
-                } else {
-                    services.startMusic();
+                try {
+                    services.setPlayMusic(position, MusicActivity.this);
+                    lrcView.bindPlayBtnAndTimeText(seekBar, startTime, endTime);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -143,25 +147,9 @@ public class MusicActivity extends Activity {
             }
         }
     };
-    MediaPlayer.OnCompletionListener onCompletionListener = new MediaPlayer.OnCompletionListener() {
-        @Override
-        public void onCompletion(MediaPlayer mp) {
-            mp.stop();
-            mp.release();
-        }
-    };
 
-    ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            services = (MusicServices) ((MusicServices.MusicBinder) service).getService();
-            MyApplication.getApp().setMusicServices(services);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            services = null;
-            MyApplication.getApp().setMusicServices(services);
-        }
-    };
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }
