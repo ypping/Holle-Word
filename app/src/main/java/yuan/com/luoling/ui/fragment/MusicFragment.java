@@ -14,8 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import java.util.List;
 
 import yuan.com.luoling.MyApplication;
 import yuan.com.luoling.R;
@@ -32,6 +32,7 @@ import yuan.com.luoling.ui.adapter.MusicRecyclerViewAdapter;
  * interface.
  */
 public class MusicFragment extends Fragment {
+    private final String TAG = "MusicFragment";
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -71,20 +72,21 @@ public class MusicFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
-
+/*
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            adapter = new MusicRecyclerViewAdapter(getActivity(), ListDate.getListData().getMusicFiles(), mListener);
-            recyclerView.setAdapter(adapter);
+        if (view instanceof RecyclerView) {*/
+        Context context = view.getContext();
+       /* PullToRefreshRecyclerView pullToRefreshRecyclerView = (PullToRefreshRecyclerView) view.findViewById(R.id.list);
+        RecyclerView recyclerView = pullToRefreshRecyclerView.getRefreshableView();*/
+         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        if (mColumnCount <= 1) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        Log.e("music", "music" + ListDate.getListData().getMusicFiles().get(0).getLrcURL());
+        adapter = new MusicRecyclerViewAdapter(getActivity(), ListDate.getListData().getMusicFiles(), mListener);
+        //}
+        //  Log.e("music", "music" + ListDate.getListData().getMusicFiles().get(0).getLrcURL());
         adapter.setOnItemClickListener(new MusicRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -97,12 +99,21 @@ public class MusicFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        adapter.setOnItemLongClickListener(new MusicRecyclerViewAdapter.OnItemLongClickListener() {
+      /*  adapter.setOnItemLongClickListener(new MusicRecyclerViewAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(View view, int Position, List<MusicFiles> list) {
 
             }
-        });
+        });*/
+        recyclerView.setAdapter(adapter);
+        TextView textView = null;
+        if (ListDate.getListData().getMusicFiles().size() == 0) {
+            textView = new TextView(getActivity());
+            textView.setText("没有音乐，请扫描音乐后扫描音乐");
+        } else if (textView != null) {
+            textView.setVisibility(View.GONE);
+        }
+        //pullToRefreshRecyclerView.addView(textView);
         return view;
     }
 
@@ -154,7 +165,8 @@ public class MusicFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        getActivity().unbindService(serviceConnection);
+        if (MyApplication.getApp().getMusicServices() != null)
+            getActivity().unbindService(serviceConnection);
         super.onDestroy();
     }
 }

@@ -10,9 +10,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.xutils.ex.DbException;
 
@@ -59,7 +62,15 @@ public class ImageFragment extends Fragment {
                 viewAdapter.getData(data.getImageFiles());
             }
         });
-
+        TextView textView = null;
+        if (ListDate.getListData().getImageFiles().size() == 0) {
+            Log.e(TAG, TAG + "size" + ListDate.getListData().getVideoFiles().size());
+            textView = new TextView(getActivity());
+            textView.setText("没有图片，请扫描添加图片后扫描");
+            container.addView(textView);
+        } else if (textView != null) {
+            textView.setVisibility(View.GONE);
+        }
         return view;
     }
 

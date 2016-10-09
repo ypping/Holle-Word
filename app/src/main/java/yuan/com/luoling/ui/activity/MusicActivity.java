@@ -68,7 +68,9 @@ public class MusicActivity extends Activity {
         lrcView.bindSeekBar(seekBar);
         try {
             Log.e(TAG, TAG + "lrcView" + musicFiles.get(position).getLrcURL());
-            lrcView.setLRCPath(musicFiles.get(position).getLrcURL());
+            if (musicFiles.get(position).getLrcURL()!=null){
+                lrcView.setLRCPath(musicFiles.get(position).getLrcURL());
+            }
 
             //
         } catch (IOException e) {

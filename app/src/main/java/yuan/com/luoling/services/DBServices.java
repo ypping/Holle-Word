@@ -63,6 +63,13 @@ public class DBServices extends Service {
     }
 
     /**
+     * 第一次执行app，调用递归去实现遍历
+     */
+    public List<MusicFiles> findMusic(List<MusicFiles> musicFiles) {
+        return DBCursorUtils.findFilePath(Environment.getExternalStorageDirectory().getPath(), musicFiles);
+    }
+
+    /**
      * 数据库添加图片
      */
     public List<ImageFiles> curcorImage(Context context) {

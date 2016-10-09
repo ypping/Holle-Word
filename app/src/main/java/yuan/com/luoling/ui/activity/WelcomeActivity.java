@@ -55,7 +55,8 @@ public class WelcomeActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wecome);
         sequenceImageList();
-        sequenceMusicList();
+        //sequenceMusicList();
+         traverseMusicList();
         sequenceVideoList();
         welcomeFragment = new WelcomeFragment();
         frameLayout = (FrameLayout) findViewById(R.id.wecome_Fragme);
@@ -105,7 +106,7 @@ public class WelcomeActivity extends FragmentActivity {
                     //倒叙处理
                     Collections.reverse(imageFiles);
                     ListDate.getListData().setImageFiles(imageFiles);
-                    Log.e(TAG, TAG + "mdd" + imageFiles.size());
+                    Log.e(TAG, TAG + "Image" + imageFiles.size());
                     myDbService.addImageDB(imageFiles);
                 } catch (DbException e) {
                     e.printStackTrace();
@@ -124,7 +125,32 @@ public class WelcomeActivity extends FragmentActivity {
                 synchronized (MusicFiles.class) {
                     Log.i("services", String.valueOf(MyApplication.getApp().getDbServices()));
                     List<MusicFiles> musicFiles = MyApplication.getApp().getDbServices().curcorMusic(WelcomeActivity.this);
-                    Log.i("services", musicFiles.size() + "");
+                    Log.i("services", musicFiles.size() + "music");
+                    sequenceLRC(musicFiles);
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 遍历音乐文件
+     */
+    private void traverseMusicList() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (MusicFiles.class) {
+                    Log.i("services", String.valueOf(MyApplication.getApp().getDbServices()));
+                    List<MusicFiles> musicFiles = new ArrayList<MusicFiles>();
+                    musicFiles = MyApplication.getApp().getDbServices().findMusic(musicFiles);
+                    //     Log.i("services", musicFiles.size() + "");
+                    //将图片排序以图片大小进行排序
+                    LuoLingComparator comparatorImage = new LuoLingComparator(MusicFiles.class);
+                    Collections.sort(musicFiles, comparatorImage);
+                    //倒叙处理
+                    Collections.reverse(musicFiles);
+                    ListDate.getListData().setMusicFiles(musicFiles);
+                    Log.e(TAG, TAG + "music" + musicFiles.size());
                     sequenceLRC(musicFiles);
                 }
             }
@@ -145,7 +171,7 @@ public class WelcomeActivity extends FragmentActivity {
                     DensityUtil.matchingLRC(music, fileList);
                 }
                 ListDate.getListData().setMusicFiles(musicFiles);
-                Log.e(TAG, TAG + "mdd" + musicFiles.size());
+                Log.e(TAG, TAG + "musicLrc" + musicFiles.size());
                 try {
                     myDbService.addMusicDB(musicFiles);
                 } catch (DbException e) {
@@ -167,7 +193,7 @@ public class WelcomeActivity extends FragmentActivity {
                 Log.i("services", videoFiles.size() + "");
                 try {
                     ListDate.getListData().setVideoFiles(videoFiles);
-                    Log.e(TAG, TAG + "mdd" + videoFiles.size());
+                    Log.e(TAG, TAG + "video" + videoFiles.size());
                     myDbService.addVideoDB(videoFiles);
                 } catch (DbException e) {
                     e.printStackTrace();

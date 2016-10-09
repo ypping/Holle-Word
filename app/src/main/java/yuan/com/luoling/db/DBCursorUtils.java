@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -219,8 +218,9 @@ public class DBCursorUtils {
      *
      * @param path
      */
-    public static List<ImageFiles> findFilePath4(final String path, final List<ImageFiles> imageFiles) {
+    public static List findFilePath4(final String path, final List<ImageFiles> imageFiles) {
         File[] a = new File(path).listFiles();
+
         for (File f : a) {
             if (f.isFile()) {
                 if (f.getName().toLowerCase().endsWith(".jpg")) {
@@ -247,8 +247,47 @@ public class DBCursorUtils {
             } else {
                 findFilePath4(f.getPath(), imageFiles);
             }
+
         }
         return imageFiles;
+    }
+
+    public static List<MusicFiles> findFilePath(final String path, final List<MusicFiles> musicFiles) {
+        File[] a = new File(path).listFiles();
+        for (File f : a) {
+            if (f.isFile()) {
+                if (f.getName().toLowerCase().endsWith(".mp3")) {
+                    MusicFiles musicFile = new MusicFiles(f.getPath(), f.getName(),
+                            f.length(), 0, i, null, null,
+                            null, null, null);
+                    musicFiles.add(musicFile);
+                    i++;
+                          /*String path, String name, Long size, long time, int music_ID, String artist,
+                      String album, String artistPhotoURL, String artistPhotoURLFile, String lrcURL*/
+                } else if (f.getName().toLowerCase().endsWith(".wma")) {
+                    MusicFiles musicFile = new MusicFiles(f.getPath(), f.getName(),
+                            f.length(), 0, i, null, null,
+                            null, null, null);
+                    musicFiles.add(musicFile);
+                    i++;
+                } else if (f.getName().toLowerCase().endsWith(".m4a")) {
+                    MusicFiles musicFile = new MusicFiles(f.getPath(), f.getName(),
+                            f.length(), 0, i, null, null,
+                            null, null, null);
+                    musicFiles.add(musicFile);
+                    i++;
+                } else if (f.getName().toLowerCase().endsWith(".mmf")) {
+                    MusicFiles musicFile = new MusicFiles(f.getPath(), f.getName(),
+                            f.length(), 0, i, null, null,
+                            null, null, null);
+                    musicFiles.add(musicFile);
+                    i++;
+                }
+            } else {
+                findFilePath(f.getPath(), musicFiles);
+            }
+        }
+        return musicFiles;
     }
 
     /**

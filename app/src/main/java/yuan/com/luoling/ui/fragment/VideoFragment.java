@@ -8,7 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.List;
 
 import yuan.com.luoling.R;
@@ -23,6 +25,7 @@ import yuan.com.luoling.utils.DensityUtil;
  * 视频界面
  */
 public class VideoFragment extends Fragment {
+    private final String TAG = "VideoFragment";
     private RecyclerView recyclerView;
     private VideoRecylerAdapter videoRecylerAdapter;
     private ListDate data = ListDate.getListData();
@@ -44,6 +47,7 @@ public class VideoFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), VideoActivity.class);
                 intent.putExtra("position", position);
+                intent.putExtra("VideoFiles", (Serializable) data.getVideoFiles());
                 startActivity(intent);
             }
         });
@@ -55,7 +59,12 @@ public class VideoFragment extends Fragment {
 
         });
         recyclerView.setAdapter(videoRecylerAdapter);
-
+        TextView textView = (TextView) view.findViewById(R.id.text);
+        if (data.getVideoFiles().size() < 1) {
+            textView.setVisibility(View.VISIBLE);
+        } else {
+            textView.setVisibility(View.GONE);
+        }
         return view;
     }
 

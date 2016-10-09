@@ -228,26 +228,31 @@ public class MainActivity extends Activity {
         this.unbindService(serviceConnection);
     }
 
+    private List<MusicFiles> musicFiles;
+
     /**
      * 获得图片数据库
      */
     private void getImageDB() {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 synchronized (ImageFiles.class) {
                     List<ImageFiles> files = new ArrayList<ImageFiles>();
                     try {
-                        files.addAll(MyApplication.getApp().getDbManager().findAll(ImageFiles.class));
+                        if (MyApplication.getApp().getDbManager().findAll(ImageFiles.class) != null)
+                            files.addAll(MyApplication.getApp().getDbManager().findAll(ImageFiles.class));
                     } catch (DbException e) {
                         e.printStackTrace();
                     }
                     date.setImageFiles(files);
                 }
                 synchronized (MusicFiles.class) {
-                    List<MusicFiles> musicFiles = new ArrayList<MusicFiles>();
+                    musicFiles = new ArrayList<MusicFiles>();
                     try {
-                        musicFiles.addAll(MyApplication.getApp().getDbManager().findAll(MusicFiles.class));
+                        if (MyApplication.getApp().getDbManager().findAll(MusicFiles.class) != null)
+                            musicFiles.addAll(MyApplication.getApp().getDbManager().findAll(MusicFiles.class));
                     } catch (DbException e) {
                         e.printStackTrace();
                     }
@@ -256,7 +261,8 @@ public class MainActivity extends Activity {
                 synchronized (VideoFiles.class) {
                     List<VideoFiles> videoFiles = new ArrayList<VideoFiles>();
                     try {
-                        videoFiles.addAll(MyApplication.getApp().getDbManager().findAll(VideoFiles.class));
+                        if (MyApplication.getApp().getDbManager().findAll(VideoFiles.class) != null)
+                            videoFiles.addAll(MyApplication.getApp().getDbManager().findAll(VideoFiles.class));
                     } catch (DbException e) {
                         e.printStackTrace();
                     }
