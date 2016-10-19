@@ -6,9 +6,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -49,6 +51,7 @@ public class LRCView extends View {
      */
     private float moveOffY;
     private float space;
+    private final MediaPlayer mediaPlayer = MyApplication.getApp().getMusicServices().getMediaPlayer();
     Paint p1 = new Paint();
     Paint p2 = new Paint();
 
@@ -206,22 +209,12 @@ public class LRCView extends View {
         intiOtherView();
     }
 
-   /* private void intiMediaPlay() {
-        if (mPlayer == null) {
-            mPlayer = new MediaPlayer();
-            mPlayer.setOnCompletionListener(playComletion);
-
-        } else
-            mPlayer.stop();
-        mPlayer.reset();
-    }*/
-
     private void intiOtherView() {
 
         if (musicTimeText != null)
-            musicTimeText.setText(parseTimeToString(MyApplication.getApp().getMusicServices().getMediaPlayer().getDuration()));
+            musicTimeText.setText(parseTimeToString(mediaPlayer.getDuration()));
         if (mSeekBar != null) {
-            mSeekBar.setProgress(MyApplication.getApp().getMusicServices().getMediaPlayer().getCurrentPosition());
+            mSeekBar.setProgress(mediaPlayer.getCurrentPosition());
         }
         if (currentTimeText != null) {
             currentTimeText.setText("00:00");
@@ -318,25 +311,28 @@ public class LRCView extends View {
         if (currentTime != ct) {
             currentTime = ct;
             invalidate();
-            if (MyApplication.getApp().getMusicServices().getMediaPlayer().isPlaying())
+            if (mediaPlayer.isPlaying())
                 animotion(md);
         }
+
     }
 
     Runnable mRun = new Runnable() {
         @Override
         public void run() {
-            mHandler.sendEmptyMessage(MyApplication.getApp().getMusicServices().getMediaPlayer().getCurrentPosition());
+            if (mediaPlayer != null) {
+                mHandler.sendEmptyMessage(mediaPlayer.getCurrentPosition());
+            }
         }
     };
     @SuppressLint("HandlerLeak")
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(android.os.Message msg) {
-            if (MyApplication.getApp().getMusicServices() == null) {
+            if (mediaPlayer == null) {
                 return;
             }
-            if (MyApplication.getApp().getMusicServices().getMediaPlayer().isPlaying()) {
+            if (mediaPlayer.isPlaying()) {
                 setCurrentTime(msg.what);
                 mHandler.postDelayed(mRun, 10);
             }
@@ -346,10 +342,10 @@ public class LRCView extends View {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            if (MyApplication.getApp().getMusicServices() == null)
+            if (mediaPlayer == null)
                 return;
-            MyApplication.getApp().getMusicServices().getMediaPlayer().seekTo(seekBar.getProgress());
-            if (!MyApplication.getApp().getMusicServices().getMediaPlayer().isPlaying()) {
+            mediaPlayer.seekTo(seekBar.getProgress());
+            if (!mediaPlayer.isPlaying()) {
                 setCurrentTime(seekBar.getProgress());
             }
             isChanging = false;
@@ -367,11 +363,11 @@ public class LRCView extends View {
     };
 
     public void play() {
-        if (animation != null && nextTime - MyApplication.getApp().getMusicServices().getMediaPlayer().getCurrentPosition() > 0) {
-            animotion(nextTime - MyApplication.getApp().getMusicServices().getMediaPlayer().getCurrentPosition());
+        if (animation != null && nextTime - mediaPlayer.getCurrentPosition() > 0) {
+            animotion(nextTime - mediaPlayer.getCurrentPosition());
         }
         if (mSeekBar != null)
-            mSeekBar.setMax(MyApplication.getApp().getMusicServices().getMediaPlayer().getDuration());
+            mSeekBar.setMax(mediaPlayer.getDuration());
         mHandler.postDelayed(mRun, 10);
 
     }
@@ -416,20 +412,25 @@ public class LRCView extends View {
     /**
      * 须在设置完MediaPlay后执行此方法
      *
-     * @param play
      * @param currentT
      * @param lengthT
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @SuppressLint("NewApi")
-    public void bindPlayBtnAndTimeText(View play, TextView currentT, TextView lengthT) {
+    public void bindPlayBtnAndTimeText(TextView currentT, TextView lengthT) {
         musicTimeText = lengthT;
-        if (musicTimeText != null && MyApplication.getApp().getMusicServices().getMediaPlayer() != null) {
-            musicTimeText.setText(parseTimeToString(MyApplication.getApp().getMusicServices().getMediaPlayer().getDuration()));
+        if (musicTimeText != null && mediaPlayer != null) {
+            musicTimeText.setText(parseTimeToString(mediaPlayer.getDuration()));
+        } else {
+            if (musicTimeText != null)
+                Log.d("LRCView", "LRCView" + musicTimeText.getText());
         }
         currentTimeText = currentT;
-        if (currentTimeText != null && MyApplication.getApp().getMusicServices().getMediaPlayer() != null) {
-            currentTimeText.setText(parseTimeToString(MyApplication.getApp().getMusicServices().getMediaPlayer().getCurrentPosition()));
+        if (currentTimeText != null && mediaPlayer != null) {
+            currentTimeText.setText(parseTimeToString(mediaPlayer.getCurrentPosition()));
+        } else {
+            if (musicTimeText != null)
+                Log.d("LRCView", "LRCView" + currentTimeText.getText());
         }
     }
 
@@ -512,7 +513,8 @@ public class LRCView extends View {
     MusicServices.MusicListener musicListener = new MusicServices.MusicListener() {
 
         @Override
-        public void playMusic() {
+        public void playMusic(MediaPlayer mediaPlayer) {
+
             setPlayMusic();
         }
 
@@ -527,39 +529,21 @@ public class LRCView extends View {
         }
 
         @Override
-        public void goOnMusic(int time) {
+        public void goOnMusic(int time, MediaPlayer mediaPlayer) {
+            mHandler.postDelayed(mRun, 1);
             setCurrentTime(time);
         }
 
         @Override
         public void runDirection(String path) {
             if (path == null) {
-                notLRCFile.onNotLrcFile();
                 return;
             }
             try {
                 setLRCPath(path);
-                notLRCFile.onHaveLrcFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     };
-    /**
-     * 没有找到lrc文件的监听
-     */
-    private NotLRCFile notLRCFile;
-
-    /**
-     * 没有找到lec的接口
-     */
-    public interface NotLRCFile {
-        void onNotLrcFile();
-
-        void onHaveLrcFile();
-    }
-
-    public void setNotLRCFile(NotLRCFile notLRCFile) {
-        this.notLRCFile = notLRCFile;
-    }
 }

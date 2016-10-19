@@ -32,8 +32,9 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 
-import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
-import com.handmark.pulltorefresh.library.internal.IndicatorLayout;
+import yuan.com.luoling.R;
+import yuan.com.luoling.widget.pulltorefres.library.internal.EmptyViewMethodAccessor;
+import yuan.com.luoling.widget.pulltorefres.library.internal.IndicatorLayout;
 
 public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extends PullToRefreshBase<T> implements
 		OnScrollListener {

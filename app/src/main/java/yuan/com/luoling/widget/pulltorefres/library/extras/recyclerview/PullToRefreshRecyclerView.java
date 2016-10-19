@@ -128,7 +128,7 @@ public class PullToRefreshRecyclerView extends PullToRefreshBase<RecyclerView> {
         final Adapter<?> adapter = getRefreshableView().getAdapter();
 
         // 如果未设置Adapter或者Adapter没有数据可以上拉刷新
-        if (null == adapter || adapter.getItemCount() == 0) {
+        if (null == adapter ) {
             if (DEBUG) {
                 Log.d(LOG_TAG, "isLastItemVisible. Empty View.");
             }

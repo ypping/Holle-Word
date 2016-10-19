@@ -10,10 +10,12 @@ import android.widget.VideoView;
 
 import java.util.List;
 
+import yuan.com.luoling.ActivityManagement;
 import yuan.com.luoling.R;
 import yuan.com.luoling.bean.VideoFiles;
 
 /**
+ * 视频activity
  * Created by YUAN on 2016/9/19.
  */
 public class VideoActivity extends Activity {
@@ -25,6 +27,7 @@ public class VideoActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
+        ActivityManagement.getInstance().sendActivity.createActivity(this);
         Intent intent = getIntent();
         list = (List<VideoFiles>) intent.getSerializableExtra("VideoFiles");
         position = intent.getIntExtra("position", 0);
@@ -63,5 +66,11 @@ public class VideoActivity extends Activity {
         videoView.setFitsSystemWindows(true);
         videoView.setHovered(true);
         videoView.setTop(55);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityManagement.getInstance().sendActivity.destroyActivity(this);
     }
 }

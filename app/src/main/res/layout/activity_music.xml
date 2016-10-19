@@ -105,7 +105,8 @@
                     android:layout_height="52dp"
                     android:layout_margin="@dimen/padding_16dp"
                     android:background="@drawable/select_music_stop_on_start"
-                    android:button="@null" />
+                    android:button="@null"
+                    android:checked="false" />
 
                 <ImageView
                     android:id="@+id/rightMusic"

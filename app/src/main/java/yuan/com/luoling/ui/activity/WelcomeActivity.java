@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import yuan.com.luoling.ActivityManagement;
 import yuan.com.luoling.MyApplication;
 import yuan.com.luoling.R;
 import yuan.com.luoling.bean.ImageFiles;
@@ -54,9 +55,10 @@ public class WelcomeActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wecome);
+        ActivityManagement.getInstance().sendActivity.createActivity(this);
         sequenceImageList();
         //sequenceMusicList();
-         traverseMusicList();
+        traverseMusicList();
         sequenceVideoList();
         welcomeFragment = new WelcomeFragment();
         frameLayout = (FrameLayout) findViewById(R.id.wecome_Fragme);
@@ -200,5 +202,11 @@ public class WelcomeActivity extends FragmentActivity {
                 }
             }
         }).start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityManagement.getInstance().sendActivity.destroyActivity(this);
     }
 }

@@ -27,7 +27,7 @@ import yuan.com.luoling.bean.VideoFiles;
 /**
  * Created by YUAN on 2016/9/12.
  */
-public class VideoRecylerAdapter extends RecyclerView.Adapter<VideoRecylerAdapter.MyViewHolder> {
+public class VideoRecyclerAdapter extends RecyclerView.Adapter<VideoRecyclerAdapter.MyViewHolder> {
     private final String TAG = "ImageRecylerViewAdapter";
     private Context context;
     private List<VideoFiles> list;
@@ -51,13 +51,13 @@ public class VideoRecylerAdapter extends RecyclerView.Adapter<VideoRecylerAdapte
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
-    public VideoRecylerAdapter(Context context, ListDate date) {
+    public VideoRecyclerAdapter(Context context, ListDate date) {
         this.context = context;
         list = date.getVideoFiles();
         inflater = LayoutInflater.from(context);
     }
 
-    public VideoRecylerAdapter(Context context) {
+    public VideoRecyclerAdapter(Context context) {
         this.context = context;
         inflater = LayoutInflater.from(context);
     }

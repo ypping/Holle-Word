@@ -29,10 +29,11 @@ import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import yuan.com.luoling.R;
+import yuan.com.luoling.widget.pulltorefres.library.internal.EmptyViewMethodAccessor;
 
 public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView> {
 

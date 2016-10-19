@@ -24,14 +24,13 @@ import java.util.List;
 
 import yuan.com.luoling.R;
 import yuan.com.luoling.bean.ImageFiles;
-import yuan.com.luoling.bean.ListDate;
 
 /**
- * recyleviewAdapter瀑布流布局适配器
+ * recyclerViewAdapter瀑布流布局适配器
  * Created by yuan-pc on 2016/06/24.
  */
 public class ImageRecylerViewAdapter extends RecyclerView.Adapter<ImageRecylerViewAdapter.MyViewHolder> {
-    private final String TAG = "ImageRecylerViewAdapter";
+    private final String TAG = "ImageRecyclerViewAdapter";
     private Context context;
     private List<ImageFiles> list;
     private LayoutInflater inflater;
@@ -54,9 +53,9 @@ public class ImageRecylerViewAdapter extends RecyclerView.Adapter<ImageRecylerVi
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
-    public ImageRecylerViewAdapter(Context context, ListDate date) {
+    public ImageRecylerViewAdapter(Context context, List<ImageFiles> list) {
         this.context = context;
-        list = date.getImageFiles();
+        this.list = list;
         inflater = LayoutInflater.from(context);
     }
 
@@ -89,7 +88,7 @@ public class ImageRecylerViewAdapter extends RecyclerView.Adapter<ImageRecylerVi
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         final File file = new File(list.get(position).getPath());
-        Log.i(TAG, "file:" + file.getPath());
+
         final ViewPropertyAnimation.Animator animator = new ViewPropertyAnimation.Animator() {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override

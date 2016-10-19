@@ -14,16 +14,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 
 import yuan.com.luoling.MyApplication;
 import yuan.com.luoling.R;
 import yuan.com.luoling.bean.ListDate;
 import yuan.com.luoling.bean.MusicFiles;
 import yuan.com.luoling.services.MusicServices;
+import yuan.com.luoling.ui.activity.HomeActivity;
 import yuan.com.luoling.ui.activity.MusicActivity;
 import yuan.com.luoling.ui.adapter.MusicRecyclerViewAdapter;
+import yuan.com.luoling.widget.pulltorefres.library.extras.recyclerview.PullToRefreshRecyclerView;
+
 
 /**
  * A fragment representing a list of Items.
@@ -76,9 +81,9 @@ public class MusicFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {*/
         Context context = view.getContext();
-       /* PullToRefreshRecyclerView pullToRefreshRecyclerView = (PullToRefreshRecyclerView) view.findViewById(R.id.list);
-        RecyclerView recyclerView = pullToRefreshRecyclerView.getRefreshableView();*/
-         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        PullToRefreshRecyclerView pullToRefreshRecyclerView = (PullToRefreshRecyclerView) view.findViewById(R.id.list);
+        RecyclerView recyclerView = pullToRefreshRecyclerView.getRefreshableView();
+        //  RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
         if (mColumnCount <= 1) {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
@@ -92,7 +97,9 @@ public class MusicFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 if (MyApplication.getApp().getMusicServices() == null) {
                     Intent intent = new Intent(getActivity(), MusicServices.class);
+
                     getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+                    Log.d(TAG, TAG + "services" + serviceConnection.getClass().toString());
                 }
                 Intent intent = new Intent(getActivity(), MusicActivity.class);
                 intent.putExtra("position", position);
@@ -113,7 +120,20 @@ public class MusicFragment extends Fragment {
         } else if (textView != null) {
             textView.setVisibility(View.GONE);
         }
-        //pullToRefreshRecyclerView.addView(textView);
+       // pullToRefreshRecyclerView.addView(textView);
+        ((HomeActivity) getActivity()).setRefreshData(new HomeActivity.RefreshData() {
+            @Override
+            public void onRefreshData() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Glide.get(getActivity()).clearDiskCache();
+                    }
+                }).start();
+                Glide.get(getActivity()).clearMemory();
+                adapter.setData(ListDate.getListData().getMusicFiles());
+            }
+        });
         return view;
     }
 

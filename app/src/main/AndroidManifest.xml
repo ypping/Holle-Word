@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="yuan.com.luoling">
 
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -56,7 +57,9 @@
         <activity
             android:name=".ui.activity.HomeActivity"
             android:launchMode="singleTask" />
-        <activity android:name=".ui.activity.VideoActivity" />
+        <activity
+            android:name=".ui.activity.VideoActivity"
+            android:screenOrientation="landscape" />
         <activity android:name=".ui.activity.WelcomeActivity" />
         <activity android:name=".ui.activity.MusicActivity" />
         <activity
@@ -122,6 +125,9 @@
             android:permission="yuan.com.luoling.permission.My_permission" />
         <service
             android:name=".services.MusicServices"
+            android:permission="yuan.com.luoling.permission.My_permission" />
+        <service
+            android:name=".services.VideoServices"
             android:permission="yuan.com.luoling.permission.My_permission" />
     </application>
 

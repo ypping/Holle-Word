@@ -52,4 +52,9 @@
         <!-- 模糊 -->
 
     </style>
+
+    <style name="AnimTools" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/menu_popup_in</item>
+        <item name="android:windowExitAnimation">@anim/menu_popup_out</item>
+    </style>
 </resources>

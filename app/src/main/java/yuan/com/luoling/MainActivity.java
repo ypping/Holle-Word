@@ -1,6 +1,5 @@
 package yuan.com.luoling;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -45,7 +44,7 @@ import yuan.com.luoling.utils.ActivityBar;
 import yuan.com.luoling.utils.IntentLink;
 
 @ContentView(value = R.layout.activity_main)
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
     private final String TAG = "MainActivity";
     private final int INTERNET_WIFI = 1;
     private final int INTERNET_CMWAP = 2;
@@ -58,7 +57,7 @@ public class MainActivity extends Activity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ActivityManagement.getInstance().sendActivity.createActivity(this);
         x.view().inject(this);
         ShareSDK.initSDK(this);
         ActivityBar.setTranslucent(this);
@@ -72,6 +71,13 @@ public class MainActivity extends Activity {
         int intenttype = IntentLink.getInternetType(this);
         Log.i("intentType", "intent:" + intenttype);
         setImage();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Glide.get(getApplicationContext()).clearDiskCache();
+            }
+        }).start();
+        Glide.get(getApplicationContext()).clearMemory();
     }
 
     private void setData() {
@@ -226,6 +232,7 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         this.unbindService(serviceConnection);
+        ActivityManagement.getInstance().sendActivity.destroyActivity(this);
     }
 
     private List<MusicFiles> musicFiles;

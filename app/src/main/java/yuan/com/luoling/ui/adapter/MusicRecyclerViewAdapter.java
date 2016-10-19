@@ -36,6 +36,11 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecycler
         void onItemClick(View view, int position);
     }
 
+    public void setData(List<MusicFiles> data) {
+        this.mValues = data;
+        notifyDataSetChanged();
+    }
+
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
@@ -69,7 +74,7 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecycler
         Glide.with(context).load(mValues.get(position).getArtistPhotoURL()).placeholder(R.mipmap.moren).
                 fitCenter().centerCrop().into(holder.musicImage);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-        if (mValues.get(position).getTime()==0){
+        if (mValues.get(position).getTime() == 0) {
 
         }
         holder.musicTime.setText(String.valueOf(TimeUtils.milliseconds2String(mValues.get(position).getTime(), simpleDateFormat)));

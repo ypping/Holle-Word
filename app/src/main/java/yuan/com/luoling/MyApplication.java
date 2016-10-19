@@ -12,6 +12,7 @@ import org.xutils.x;
 
 import yuan.com.luoling.services.DBServices;
 import yuan.com.luoling.services.MusicServices;
+import yuan.com.luoling.services.VideoServices;
 
 
 /**
@@ -40,6 +41,7 @@ public class MyApplication extends Application {
      * 音乐的服务类
      */
     private MusicServices musicServices;
+    private VideoServices videoServices;
     /**
      * 是否是第一次运行
      */
@@ -75,6 +77,8 @@ public class MyApplication extends Application {
                 });
         dbManager = x.getDb(daoConfig);
         isFristRun = isFristRun();
+        ExceptionHandling exceptionHandling = ExceptionHandling.getInstance();
+        exceptionHandling.init(getApplicationContext());
 
     }
 
@@ -135,5 +139,13 @@ public class MyApplication extends Application {
 
     public void setMusicServices(MusicServices musicServices) {
         this.musicServices = musicServices;
+    }
+
+    public VideoServices getVideoServices() {
+        return videoServices;
+    }
+
+    public void setVideoServices(VideoServices videoServices) {
+        this.videoServices = videoServices;
     }
 }

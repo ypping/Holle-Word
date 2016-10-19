@@ -182,6 +182,7 @@ public class DBCursorUtils {
         Collections.sort(musicFiles, comparatorImage);
         //倒叙处理
         Collections.reverse(musicFiles);
+
         return musicFiles;
     }
 
@@ -256,32 +257,32 @@ public class DBCursorUtils {
         File[] a = new File(path).listFiles();
         for (File f : a) {
             if (f.isFile()) {
-                if (f.getName().toLowerCase().endsWith(".mp3")) {
-                    MusicFiles musicFile = new MusicFiles(f.getPath(), f.getName(),
-                            f.length(), 0, i, null, null,
-                            null, null, null);
-                    musicFiles.add(musicFile);
-                    i++;
-                          /*String path, String name, Long size, long time, int music_ID, String artist,
-                      String album, String artistPhotoURL, String artistPhotoURLFile, String lrcURL*/
-                } else if (f.getName().toLowerCase().endsWith(".wma")) {
-                    MusicFiles musicFile = new MusicFiles(f.getPath(), f.getName(),
-                            f.length(), 0, i, null, null,
-                            null, null, null);
-                    musicFiles.add(musicFile);
-                    i++;
-                } else if (f.getName().toLowerCase().endsWith(".m4a")) {
-                    MusicFiles musicFile = new MusicFiles(f.getPath(), f.getName(),
-                            f.length(), 0, i, null, null,
-                            null, null, null);
-                    musicFiles.add(musicFile);
-                    i++;
-                } else if (f.getName().toLowerCase().endsWith(".mmf")) {
-                    MusicFiles musicFile = new MusicFiles(f.getPath(), f.getName(),
-                            f.length(), 0, i, null, null,
-                            null, null, null);
-                    musicFiles.add(musicFile);
-                    i++;
+                if (f.length() > 102400) {
+                    if (f.getName().toLowerCase().endsWith(".mp3")) {
+                        MusicFiles musicFile = new MusicFiles(f.getPath(), f.getName(),
+                                f.length(), 0, i, null, null,
+                                null, null, null);
+                        musicFiles.add(musicFile);
+                        i++;
+                    } else if (f.getName().toLowerCase().endsWith(".wma")) {
+                        MusicFiles musicFile = new MusicFiles(f.getPath(), f.getName(),
+                                f.length(), 0, i, null, null,
+                                null, null, null);
+                        musicFiles.add(musicFile);
+                        i++;
+                    } else if (f.getName().toLowerCase().endsWith(".m4a")) {
+                        MusicFiles musicFile = new MusicFiles(f.getPath(), f.getName(),
+                                f.length(), 0, i, null, null,
+                                null, null, null);
+                        musicFiles.add(musicFile);
+                        i++;
+                    } else if (f.getName().toLowerCase().endsWith(".mmf")) {
+                        MusicFiles musicFile = new MusicFiles(f.getPath(), f.getName(),
+                                f.length(), 0, i, null, null,
+                                null, null, null);
+                        musicFiles.add(musicFile);
+                        i++;
+                    }
                 }
             } else {
                 findFilePath(f.getPath(), musicFiles);

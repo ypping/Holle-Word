@@ -1,7 +1,5 @@
 package yuan.com.luoling.db;
 
-import android.util.Log;
-
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 
@@ -71,14 +69,23 @@ public class MyDbService {
     }
 
     public void updateImageDB(List<ImageFiles> lists) throws DbException {
+        dbManager.delete(ImageFiles.class);
+        addImageDB(lists);
 
-        dbManager.replace(lists);
         //如果一个对象主键为null则会新增该对象,成功之后【会】对user的主键进行赋值绑定,否则根据主键去查找更新
     }
 
     public void updateMusicDB(List<MusicFiles> lists) throws DbException {
 
-        dbManager.replace(lists);
+        dbManager.delete(MusicFiles.class);
+        addMusicDB(lists);
+        //如果一个对象主键为null则会新增该对象,成功之后【会】对user的主键进行赋值绑定,否则根据主键去查找更新
+    }
+
+    public void updateVideoDB(List<VideoFiles> lists) throws DbException {
+
+        dbManager.delete(MusicFiles.class);
+        addVideoDB(lists);
         //如果一个对象主键为null则会新增该对象,成功之后【会】对user的主键进行赋值绑定,否则根据主键去查找更新
     }
 

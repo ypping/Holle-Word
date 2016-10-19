@@ -13,8 +13,8 @@
         android:layout_weight="1"
         android:padding="10dp"></android.support.v4.view.ViewPager>
 
-    <yuan.com.luoling.ui.widget.MyRecycler
+    <yuan.com.luoling.widget.pulltorefres.library.extras.recyclerview.PullToRefreshRecyclerView
         android:id="@+id/list_my_recylerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></yuan.com.luoling.ui.widget.MyRecycler>
+        android:layout_height="match_parent"></yuan.com.luoling.widget.pulltorefres.library.extras.recyclerview.PullToRefreshRecyclerView>
 </LinearLayout>

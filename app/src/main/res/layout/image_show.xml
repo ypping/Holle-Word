@@ -20,7 +20,7 @@
 
         <ImageView
             android:id="@+id/back"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/space_24dp"
             android:paddingRight="@dimen/space_24dp"
@@ -31,7 +31,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:padding="@dimen/mine_left_right_margin" />
+            android:gravity="center"
+            android:padding="@dimen/mine_left_right_margin"
+            android:text="小娄娄的图片"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/rightTitle"

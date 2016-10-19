@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import org.xutils.view.annotation.ContentView;
 
 import java.util.ArrayList;
 
+import yuan.com.luoling.ActivityManagement;
 import yuan.com.luoling.R;
 import yuan.com.luoling.bean.ImageFiles;
 import yuan.com.luoling.bean.ListDate;
@@ -42,12 +44,13 @@ public class ImageShow extends Activity {
         super.onCreate(savedInstanceState);
         ActivityBar.setStatusBarColor(this, R.color.colorAlipe);
         setContentView(R.layout.image_show);
-
+        ActivityManagement.getInstance().sendActivity.createActivity(this);
         viewPager = (ViewPager) findViewById(R.id.image_show_image);
         back = findViewById(R.id.back);
         data = ListDate.getListData();
         Intent intent = getIntent();
         position = intent.getExtras().getInt("position");
+        Log.d(TAG, TAG + position + "name" + data.getImageFiles().get(position).getPath());
         myPagerAdapter = new MyPagerAdapter();
         viewPager.setAdapter(myPagerAdapter);
         viewPager.setCurrentItem(position);
@@ -151,4 +154,9 @@ public class ImageShow extends Activity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityManagement.getInstance().sendActivity.destroyActivity(this);
+    }
 }

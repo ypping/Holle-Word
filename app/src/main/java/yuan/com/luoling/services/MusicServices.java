@@ -13,11 +13,11 @@ import android.support.annotation.Nullable;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
 
-import yuan.com.luoling.MyApplication;
 import yuan.com.luoling.bean.ListDate;
 import yuan.com.luoling.bean.MusicFiles;
 
@@ -36,7 +36,7 @@ public class MusicServices extends Service {
     /**
      * media play播放对象
      */
-    private MediaPlayer mediaPlayer;
+    private final MediaPlayer mediaPlayer = new MediaPlayer();
     /**
      * 是否播放
      */
@@ -62,9 +62,6 @@ public class MusicServices extends Service {
         return mediaPlayer;
     }
 
-    public void setMediaPlayer(MediaPlayer mediaPlayer) {
-        this.mediaPlayer = mediaPlayer;
-    }
 
     public class MusicBinder extends Binder {
         public Service getService() {
@@ -78,8 +75,8 @@ public class MusicServices extends Service {
         return musicBinder;
     }
 
-    public int getPlayPosition() {
-        return playPosition;
+    public int getPosition() {
+        return position;
     }
 
     public void setPlayPosition(int playPosition) {
@@ -91,11 +88,6 @@ public class MusicServices extends Service {
         super.onCreate();
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         telephonyManager.listen(new MyPhoneListener(), PhoneStateListener.LISTEN_CALL_STATE);
-        if (mediaPlayer == null) {
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setOnErrorListener(errorListener);
-            mediaPlayer.setOnCompletionListener(onCompletionListener);
-        }
     }
 
     @Override
@@ -111,9 +103,23 @@ public class MusicServices extends Service {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
-            mediaPlayer = null;
         }
         super.onDestroy();
+    }
+
+    /**
+     * 创建一个播放服务，在播放完成后终结
+     *
+     * @return
+     */
+    private MediaPlayer mediaCreate() {
+       /* if (null == mediaPlayer) {
+            mediaPlayer = new MediaPlayer();
+        }*/
+        mediaPlayer.reset();
+        mediaPlayer.setOnErrorListener(errorListener);
+        mediaPlayer.setOnCompletionListener(onCompletionListener);
+        return mediaPlayer;
     }
 
     /**
@@ -125,15 +131,29 @@ public class MusicServices extends Service {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void setPlayMusic(int position, Context context) throws IOException {
         this.context = context;
-        this.position = position;
-        if (isPlay) {
-            MyApplication.getApp().getMusicServices().setMediaPlayer(mediaPlayer);
+        if (this.position != position && isPlay) {
+            stopMusic();
+            this.position = position;
+            mediaCreate();
+            playMusic(musicFiles.get(position).getPath(), null, context);
+            return;
+        }
+
+        if (!isPlay) {
             isPlay = true;
             playMusic(musicFiles.get(position).getPath(), null, context);
-        } else if (mediaPlayer.isPlaying()) {
-            pauseMusic();
+        } else if (mediaPlayer != null) {
+            if (this.position != position) {
+                this.position = position;
+                mediaCreate();
+                playMusic(musicFiles.get(position).getPath(), null, context);
+            } else {
+
+                startMusic();
+            }
         } else {
-            startMusic();
+            mediaCreate();
+            playMusic(musicFiles.get(position).getPath(), null, context);
         }
     }
 
@@ -151,7 +171,7 @@ public class MusicServices extends Service {
      */
     private MediaPlayer NextMusic(Context context) {
         position += position;
-        mediaPlayer = MediaPlayer.create(context, Uri.parse(musicFiles.get(position).getPath()));
+        //  mediaPlayer = MediaPlayer.create(context, Uri.parse(musicFiles.get(position).getPath()));
         mediaPlayer.reset();
         mediaPlayer.start();
         mediaPlayer.release();
@@ -191,8 +211,7 @@ public class MusicServices extends Service {
      */
     public void leftMusic(int position) {
         if (null == mediaPlayer) {
-            mediaPlayer = new MediaPlayer();
-            MyApplication.getApp().getMusicServices().setMediaPlayer(mediaPlayer);
+            new MediaPlayer();
         }
         if (mediaPlayer.isPlaying()) {
             if (position >= 0) {
@@ -220,7 +239,7 @@ public class MusicServices extends Service {
      */
     public void rightMusic(int position) {
         if (null == mediaPlayer) {
-
+            mediaCreate();
         } else if (mediaPlayer.isPlaying()) {
             if (position < musicFiles.size()) {
                 this.position = position;
@@ -241,15 +260,23 @@ public class MusicServices extends Service {
     }
 
     public void playMusic(@Nullable String path, @Nullable Uri uri, Context context) {
+        if (null == mediaPlayer) {
+            mediaCreate();
+        }
         try {
+            Log.e(TAG, TAG + "path:" + path + "url:" + uri);
             if (path != null) {
                 mediaPlayer.setDataSource(path);
             } else if (uri != null) {
                 mediaPlayer.setDataSource(context, uri);
+            } else {
+                Toast.makeText(context, "没有路径", Toast.LENGTH_SHORT).show();
             }
+
             mediaPlayer.prepare();
             mediaPlayer.start();
-            musicListener.playMusic();
+            musicListener.playMusic(mediaPlayer);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -259,6 +286,7 @@ public class MusicServices extends Service {
      * 暂停音乐
      */
     public void pauseMusic() {
+        Log.e(TAG, TAG + mediaPlayer.isPlaying());
         mediaPlayer.pause();
         musicListener.pauseMusic();
     }
@@ -267,26 +295,22 @@ public class MusicServices extends Service {
      * 继续播放音乐
      */
     public void startMusic() {
-        if (mediaPlayer == null) {
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.reset();
-            mediaPlayer.setOnCompletionListener(onCompletionListener);
-            mediaPlayer.setOnPreparedListener(new PreparedListener(0));
-        } else if (!mediaPlayer.isPlaying()) {
+        if (!mediaPlayer.isPlaying()) {
             mediaPlayer.start();
-            musicListener.goOnMusic(playPosition);
+
+            musicListener.goOnMusic(playPosition, mediaPlayer);
         } else {
             mediaPlayer.reset();
             try {
                 mediaPlayer.setDataSource(musicFiles.get(position).getPath());
                 mediaPlayer.prepare();
                 mediaPlayer.start();
-                musicListener.goOnMusic(playPosition);
+                musicListener.goOnMusic(playPosition, mediaPlayer);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
+        Log.e(TAG, TAG + "path:" + musicFiles.get(position).getPath());
     }
 
     /**
@@ -295,10 +319,15 @@ public class MusicServices extends Service {
      * @throws IOException
      */
     public void stopMusic() throws IOException {
-        if (null != mediaPlayer) {
+        if (null == mediaPlayer) {
+            mediaPlayer.release();
+        } else if (mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
             mediaPlayer.reset();
             musicListener.stopMusic();
+        } else {
+            mediaPlayer.reset();
+            //  musicListener.stopMusic();
         }
     }
 
@@ -373,7 +402,7 @@ public class MusicServices extends Service {
         /**
          * 播放的方法
          */
-        void playMusic();
+        void playMusic(MediaPlayer mediaPlayer);
 
         /**
          * 暂停的方法
@@ -388,7 +417,7 @@ public class MusicServices extends Service {
         /**
          * 继续的方法
          */
-        void goOnMusic(int time);
+        void goOnMusic(int time, MediaPlayer mediaPlayer);
 
         /**
          * 播放音乐是上一首还是下一首
@@ -396,5 +425,4 @@ public class MusicServices extends Service {
         void runDirection(String path);
 
     }
-
 }

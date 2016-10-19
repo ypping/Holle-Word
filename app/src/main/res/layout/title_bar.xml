@@ -15,11 +15,26 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:padding="@dimen/mine_left_right_margin" />
+        android:padding="@dimen/mine_left_right_margin"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/rightTitle"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/rightImage"
+        android:layout_width="@dimen/space_50dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/margin_8dp"
+        android:background="@drawable/title_select_color"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:visibility="gone" />
 </RelativeLayout>

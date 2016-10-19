@@ -41,7 +41,19 @@ public class ScreenUtils {
         windowManager.getDefaultDisplay().getMetrics(outMetrics);// 给白纸设置宽高
         return outMetrics.widthPixels;
     }
+    /**
+     * 得到设备屏幕的宽度
+     */
+    public static int getScreenWidth1(Context context) {
+        return context.getResources().getDisplayMetrics().widthPixels;
+    }
 
+    /**
+     * 得到设备屏幕的高度
+     */
+    public static int getScreenHeight1(Context context) {
+        return context.getResources().getDisplayMetrics().heightPixels;
+    }
     /**
      * 获取屏幕的高度px
      *

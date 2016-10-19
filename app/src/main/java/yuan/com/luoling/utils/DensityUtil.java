@@ -37,8 +37,10 @@ public class DensityUtil {
     public static MusicFiles matchingLRC(MusicFiles musicFiles, List<File> files) {
         for (File f : files) {
             String fileName = f.getName().replace(getExtensionName(f.getName()), "").replace(".", "");
+            String musicName = musicFiles.getName().replace(getExtensionName(musicFiles.getName()), "").replace(".", "");
             Log.e("DensityUtils", "DensityUtils" + "file==" + fileName);
-            if (musicFiles.getName().equals(fileName)) {
+            Log.e("DensityUtils", "DensityUtils" + "musicFiles==" + musicName);
+            if (musicName.equals(fileName)) {
                 musicFiles.setLrcURL(f.getAbsolutePath());
                 return musicFiles;
             }

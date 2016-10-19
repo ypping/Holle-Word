@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
+
 /**
  * Created by YUAN on 2016/9/6.
  */
@@ -26,5 +27,11 @@ public class BaseActivity extends Activity {
             });
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
 
 }
